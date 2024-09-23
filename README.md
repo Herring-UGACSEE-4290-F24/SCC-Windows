@@ -3,9 +3,13 @@ This is the Github repository for CSEE 4290's (Windows BSOD Squad) Single Cycle 
 The Window BSOD Squad's SCC is destined for greatness.
 
 ## Team Roles:
-Charles and Mrudang : Parser\
-Lucas : Tester\
-Nikhil : Documentation\
-Connor and Tyler : Emulator
+**Parser** : Charles and Mrudang\
+**Tester** : Lucas\
+**Documentation** : Nikhil\
+**Emulator** : Connor and Tyler
+
+### Inspirational Quote:
+> "Get Good"\
+> - Dr. Herring
 
 ![Alt text](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
