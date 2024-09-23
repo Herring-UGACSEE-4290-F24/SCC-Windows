@@ -4,7 +4,7 @@ The Window BSOD Squad's SCC is destined for greatness.
 
 ---
 
-![University of Georgia Logo](https://brand.uga.edu/wp-content/uploads/UGA_logo_Formal_BW_MARCM-1024x335.png)
+![University of Georgia Logo](https://bitbucket.org/ugamc/uga-icons/src/master/icons/apple-touch-icon-114x114.png)
 
 ---
 
