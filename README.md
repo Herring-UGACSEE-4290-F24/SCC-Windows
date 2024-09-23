@@ -1,10 +1,10 @@
-# 🌐 SCC-Windows
+# 🚀 SCC-Windows
 Welcome to the **SCC-Windows** repository! This is for CSEE 4290's Single Cycle Computer (SCC) project.\
 The Window BSOD Squad's SCC is destined for greatness.
 
 ---
 
-![University of Georgia Logo](https://bitbucket.org/ugamc/uga-icons/src/master/icons/apple-touch-icon-114x114.png)
+![University of Georgia Logo](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
 
 ---
 
