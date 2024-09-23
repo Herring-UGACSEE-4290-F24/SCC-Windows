@@ -7,3 +7,5 @@ Charles and Mrudang : Parser\
 Lucas : Tester\
 Nikhil : Documentation\
 Connor and Tyler : Emulator
+
+![Alt text](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
