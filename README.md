@@ -9,7 +9,7 @@ The Window BSOD Squad's SCC is destined for greatness.
 **Emulator** : Connor and Tyler
 
 ### Inspirational Quote:
-> *"Get Good"*
+> *"Git Good"*
 > - Dr. Herring
 
 ![Alt text](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
