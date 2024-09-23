@@ -1,15 +1,24 @@
-# SCC-Windows
-This is the Github repository for CSEE 4290's (Windows BSOD Squad) Single Cycle Computer project.\
+# 🌐 SCC-Windows
+Welcome to the **SCC-Windows** repository! This is for CSEE 4290's Single Cycle Computer (SCC) project.\
 The Window BSOD Squad's SCC is destined for greatness.
 
-## Team Roles:
-**Parser** : Charles and Mrudang\
-**Tester** : Lucas\
-**Documentation** : Nikhil\
-**Emulator** : Connor and Tyler
+---
 
-### Inspirational Quote:
+![University of Georgia Logo](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
+
+---
+
+## 👥 Team Roles:
+
+| **Role**           | **Team Members**             |
+|--------------------|------------------------------|
+| **Parser**         | Charles and Mrudang          |
+| **Tester**         | Lucas                        |
+| **Documentation**  | Nikhil                       |
+| **Emulator**       | Connor and Tyler             |
+
+---
+
+### 🧠 Inspirational Quote:
 > *"Git Good"*
-> - Dr. Herring
-
-![Alt text](https://brand.uga.edu/wp-content/uploads/GEORGIA-FS-FC-2048x883.png)
+> - *Dr. Herring*
