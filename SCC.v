@@ -1,4 +1,4 @@
-module SCC_Wrapper()
+module SCC(clk,reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_read, data_write)
 begin
     input           clk             // main clock signal
     input           reset           // sets all regs to known state

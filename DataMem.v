@@ -1,4 +1,4 @@
-module DataMem_Wrapper()
+module DataMem(clk,read,write, address,data)
 begin 
     input           clk             // clock signal
     input           read            // output enable

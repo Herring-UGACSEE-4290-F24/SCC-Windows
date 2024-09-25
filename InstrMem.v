@@ -1,4 +1,4 @@
-module InstrMem_Wrapper.v()
+module InstrMem(clk, address, instruction)
 begin
     input           clk             // clock signal
     input [31:0]    address         // register location
