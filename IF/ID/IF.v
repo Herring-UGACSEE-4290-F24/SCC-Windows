@@ -1,19 +1,32 @@
-module IF(clk,reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_read, data_write)
+module IF(clk,reset, taken, branch_address,pc,instruction)
 begin
-    input           clk             // main clock signal
-    input           reset           // sets all regs to known state
-    input [31:0]    in_mem          // instructions being fetched
-    input [31:0]    data_in         // data read from memory    
+    input               clk             // main clock 
+    input               reset           // resets pc to known state
+    input               taken           // flag to show if unconditonal branch is taken
+    input      [31:0]   branch_address  // branch address
+    output reg [31:0]   pc              // address pointed to in instruction memory
+    output reg [31:0]   instruction     // enable instruction memory fetch
 
-    output [31:0]   in_mem_addr     // address pointed to in instruction memory
-    output          in_mem_en       // enable instruction memory fetch
 
-    
-    always@(posedge)
-
-    if(in_mem_en)
+    always@(posedge)  
     begin
-    
 
+    if(reset)
+    begin
+        pc <= 0x0000;
     end
+    else if(taken)
+    begin
+        pc <= branch_address
+    end
+    else
+    begin
+        pc <= pc + 4
+    end
+    end
+
+    always @(posedge clk) begin
+        instruction <=              //I am confused with this part currently
+    end
+
 end
