@@ -1,16 +1,26 @@
-module ID(clk,reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_read, data_write)
-begin
-    input           clk             // main clock signal
-    input           reset           // sets all regs to known state
-    input [31:0]    in_mem          // instructions being fetched
-    input [31:0]    data_in         // data read from memory    
+//
+// Instruction Decode Implementation
+// Handles instruction outputted from fetch tied together in the scc
+// 
 
-    output [31:0]   in_mem_addr     // address pointed to in instruction memory
-    output          in_mem_en       // enable instruction memory fetch
-    output [31:0]   data_addr       // address pointed to in data memory
-    output [31:0]   data_out        // data to write to memory
-    output          data_read       // control reading data
-    output          data_write      // control writing data
+module ID(Instruction)
+    input [31:0]        Instruction
+
+    //R-type
+    output reg  [10:0]  opcode      //bits [31:21]  (also utlized in load store)
+    output reg  [4:0]   Rm          //bits [20:16]
+    output reg  [5:0]   shamt       //bits [15:10]
+    output reg  [4:0]   Rn          //bits [9:5]    (also utlized in load store)
+    output reg  [4:0]   Rd          //bits [4:0]
+
+
+    //need I type and D type
+    
+
+	
+
+begin
+  
     
     
-end
+endmodule
