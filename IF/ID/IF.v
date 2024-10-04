@@ -6,19 +6,19 @@
 
 module IF(clk,reset, taken, branch_address,pc,instruction)
 
-    input               clk;             // main clock 
-    input               reset;           // resets pc to known state
-    input               taken;           // flag to show if  branch is taken
-    input      [31:0]   branch_address;  // branch address
-    output reg [31:0]   pc;              // address pointed to in instruction memory
-    output reg [31:0]   instruction;     // enable instruction memory fetch
+    input               clk;              // main clock 
+    input               reset;            // resets pc to known state
+    input               taken;            // flag to show if  branch is taken
+    input       [31:0]   branch_address;  // branch address
+    output wire [31:0]   pc;              // address pointed to in instruction memory
+    output reg  [31:0]   instruction;     // enable instruction memory fetch
 
     
     always@(posedge clk)  
     begin
         if(reset)
         begin
-            pc <= 0x0000;                   // resets progam counter if reset is high
+            pc <= 0x0000;                    // resets progam counter if reset is high
         end
         else if(taken)
         begin
