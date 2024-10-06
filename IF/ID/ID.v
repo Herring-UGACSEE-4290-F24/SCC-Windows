@@ -6,7 +6,7 @@
 
 // Instruction Encoding according to class isa
 // 31-30 1LD                (First Level Decoding which determines the instruction type)
-// 29    Special_encoding                  (Special Encoding for ALU)
+// 29    Special_encoding   (Special Encoding for ALU)
 // 28-25 2LD                (Second level decode)
 // 27-25 ALU   OC           (ALU OC)
 // 24-21 B. Cond            
@@ -15,25 +15,37 @@
 // 18-16 op 2 reg
 // 15-0  Immediate
 
-module ID(clk, Instruction)
+
+// Branch Prediction 
+// Possibly implement the two stage state machine discused in class
+// I currently am unsure how to store that tho
+//
+
+// For prefetch 
+// check bits 31:25 of next instruction and see if it is 1100000 or 1100010 this is unconditonal branch and branch
+// I am unsure how to implement the address saving yet
+
+module ID(clk, Instruction, Instruction_next)
     input clk;
     input [31:0]     Instruction;        //Instruction that was fetched
-
-    output reg [1:0]        1LD;                    
-    output reg              Special_encoding;
-    output reg [3:0]        2LD;
-    output reg [2:0]        ALU_OC;
-    output reg [3:0]        B_cond;
-    output reg [2:0]        dest_reg;
-    output reg [2:0]        pointer_reg;
-    output reg [2:0]        op_1_reg;
-    output reg [2:0]        op_2_reg;
-    output reg [15:0]       immediate;
-    output reg [15:0]       offset;
-    output reg [3:0]        flags;
-    always@(posedge clk)  
+    input [31:0]     Instruction_next
+    output wire [1:0]        1LD;                    
+    output wire              Special_encoding;
+    output wire [3:0]        2LD;
+    output wire [2:0]        ALU_OC;
+    output wire [3:0]        B_cond;
+    output wire [2:0]        dest_reg;
+    output wire [2:0]        pointer_reg;
+    output wire [2:0]        op_1_reg;
+    output wire [2:0]        op_2_reg;
+    output wire [15:0]       immediate;
+    output wire [15:0]       offset;
+    output wire [3:0]        flags;
+    
+   
+    initial  
     begin
-    1LD[1:0] = Instruction[31:30];                  //Determines Instruction type
+    assign 1LD[1:0] = Instruction[31:30];                  //Determines Instruction type
 
 
 
@@ -45,97 +57,97 @@ module ID(clk, Instruction)
         case (Instruction[29:25])
             5'b00000:  // Mov Command
                 begin
-                    dest_reg[2:0] = Instruction[24:22];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00001:  // Movt command
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10001:  // add
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b11001:  // adds
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10010:  // sub
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b11010:  // subs
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10011:  // and
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b11011:  // ands
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10100:  // or
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b11100:  // ors
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10101:  // xor
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0]; 
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0]; 
                 end
             5'b11101:  // xors
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00100:  // lsl
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00101:  // lsr
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign  dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00010:  // clr
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00011:  // set
                 begin 
-                    dest_reg[2:0] = Instruction[24:22];
-                    op_1_reg[2:0] = Instruction[21:19];
-                    immediate[15:0] = Instruction[15:0];
+                   assign dest_reg[2:0] = Instruction[24:22];
+                   assign op_1_reg[2:0] = Instruction[21:19];
+                   assign immediate[15:0] = Instruction[15:0];
                 end
         endcase
     end
@@ -149,68 +161,68 @@ module ID(clk, Instruction)
     case (Instruction[29:25])
         5'b10001:  // add
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b11001:  // adds
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b10010:  // sub
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b11010:  // subs
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b10011:  // and
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b11011:  // ands
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b10100:  // or
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b11100:  // ors
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b10101:  // xor
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b11101:  // xors
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
-                op_2_reg[2:0] = Instruction[18:16];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
+               assign op_2_reg[2:0] = Instruction[18:16];
             end
         5'b10110:  // NOT
             begin 
-                dest_reg[2:0] = Instruction[24:22];
-                op_1_reg[2:0] = Instruction[21:19];
+               assign dest_reg[2:0] = Instruction[24:22];
+               assign op_1_reg[2:0] = Instruction[21:19];
             end
         endcase
     end

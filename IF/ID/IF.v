@@ -4,41 +4,47 @@
 // Possible future changes -adding relative branching if it isn't handled in SCC
 //
 
-module IF(clk,reset, taken, branch_address,pc,instruction)
+module IF(clk,reset, taken, branch_address,pc, Instruction, pc_next, Instruction_next)
 
-    input               clk;              // main clock 
-    input               reset;            // resets pc to known state
-    input               taken;            // flag to show if  branch is taken
-    input       [31:0]   branch_address;  // branch address
-    output wire [31:0]   pc;              // address pointed to in instruction memory
-    output reg  [31:0]   instruction;     // enable instruction memory fetch
+    input               clk;                    // main clock 
+    input               reset;                  // resets pc to known state
+    input               taken;                  // flag to show if  branch is taken
+    input       [31:0]   branch_address;        // branch address
+    output wire [31:0]   pc;                    // address pointed to in instruction memory
+    output      [31:0]   Instruction;           // enable instruction memory fetch
+    output wire [31:0]   pc_next;               // address pointed to in instruction memory + 4
+    output reg  [31:0]   Instruction_next;      // enable instruction memory fetch
+    
 
     
     always@(posedge clk)  
     begin
         if(reset)
         begin
-            pc <= 0x0000;                    // resets progam counter if reset is high
+            assign pc = 0x0000;                    // resets progam counter if reset is high
+            assign pc_next = 0x0004;
         end
         else if(taken)
         begin
-            pc <= branch_address;            // changes program counter to branch_address  (abs branch)
+            assign pc = branch_address;            // changes program counter to branch_address  (abs branch)
+            assign pc_next = branch_address + 0x0004;
         end
         else
         begin
-            pc <= pc + 4;                    // default case: Increment PC by four
+            assign pc = pc + 0x0004;                    // default case: Increment PC by four
+            assign pc_next = pc_next + 0x0004;
         end
     end
 
     always @(posedge clk) 
     begin
-        instruction <=              //I am confused with how we should handle the actual access
+        Instruction <=              //I am confused with how we should handle the actual access
+        Instruction_next <=         //I am confused with how we should handle the actual access
     end
 
 endmodule
 
 // For IF:
-// Combine this with the ID module
 // No muxes in these files, they will be in their own separate files
 // Memory file is outside the SCC (instruction mem and data mem)
 
