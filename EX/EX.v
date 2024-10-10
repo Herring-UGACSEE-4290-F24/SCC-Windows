@@ -17,4 +17,5 @@ module EX(1LD, Special_encoding, 2LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_
 
 
     // 3 Commands to implement Add_Immediate, Add_Regs, and NOP
+    // module ALU
 
