@@ -4,15 +4,15 @@
 // Possible future changes -adding relative branching if it isn't handled in SCC
 //
 
-module IF(clk, reset, instruction)
+module IF(clk, reset, instruction);
 
-    /===========================================  I/O  ===================================================/
+    /*===========================================  I/O  ===================================================*/
     input                   clk;                   // main clock 
     input                   reset;                 // resets pc to known state
 
     output wire [31:0]      pc;                    // address pointed to in instruction memory
     output wire [31:0]      instruction;           // enable instruction memory fetch
-    /=====================================================================================================/
+    /*=====================================================================================================*/
     
     //Instantiating instruction memory
     InstrMem instr_mem(
@@ -21,22 +21,14 @@ module IF(clk, reset, instruction)
         .instruction(instruction)
     );
 
-    //Sets PC to 0 initially
-    initial begin 
-        pc <= 0x0000;
-    end
-
-    always@(posedge clk)  
+    if(reset)
     begin
-        if(reset)
-        begin
-            assign pc = 0x0000;                 // resets progam counter if reset is high
-        end
-        else
-        begin
-            instruction <= InstrMem(clk, pc);   //Loading instruction with value pointed to by PC
-            assign pc = pc + 0x0004;            // default case: Increment PC by four
-        end
+        assign pc = 32'h0000;                 // resets progam counter if reset is high
+    end
+    else
+    begin
+        assign instruction = instr_mem.instruction;   //Loading instruction with value pointed to by PC
+        assign pc = pc + 32'h0004;            // default case: Increment PC by four
     end
 
 endmodule

@@ -25,15 +25,16 @@ module SCC_tb;
     );
 
      always begin
-        clk_s <= 0;
+        clk <= 0;
         #10;
-        clk_s <= 1;
+        reset <= 0;
+        clk <= 1;
         #10;
     end
 
     initial 
         begin
-        $dumpvars(0,SCC_tb;
+        $dumpvars(0,SCC_tb);
         // Initialize signals
         clk = 0;
         reset = 1;  // Start with reset active

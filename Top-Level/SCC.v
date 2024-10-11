@@ -1,4 +1,4 @@
-module SCC(clk, reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_read, data_write)
+module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
 
     input           clk;             // main clock signal
     input           reset;           // sets all regs to known state
@@ -9,8 +9,6 @@ module SCC(clk, reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_re
     output          in_mem_en;       // enable instruction memory fetch
     output [31:0]   data_addr;       // address pointed to in data memory
     output [31:0]   data_out;        // data to write to memory
-    output          data_read;       // control reading data
-    output          data_write;      // control writing data
 
 
     //Fetch output declarations
@@ -93,4 +91,5 @@ module SCC(clk, reset,in_mem, data_in, in_mem_addr, data_addr, data_out, data_re
     //.flags(flags),
     //.ALU_results(ALU_results)
     //);
-    
+
+endmodule

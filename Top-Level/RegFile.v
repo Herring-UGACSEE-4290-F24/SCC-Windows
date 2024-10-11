@@ -1,4 +1,4 @@
-module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id, r_val_0, r_val_1)
+module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id, r_val_0, r_val_1);
 
     /===========================================  I/O  ===================================================/
     input                    clk         //Clock signal
