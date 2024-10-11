@@ -71,6 +71,8 @@ module ID(clk, Instruction, Instruction_next)
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11001:  // adds
                 begin 
