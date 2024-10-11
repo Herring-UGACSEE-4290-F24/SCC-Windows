@@ -15,7 +15,11 @@ module IF(clk,reset, taken, branch_address,pc, Instruction, pc_next, Instruction
     output wire [31:0]   pc_next;               // address pointed to in instruction memory + 4
     output reg  [31:0]   Instruction_next;      // enable instruction memory fetch
     
-
+    InstrMem instr_mem(
+        .clk(clk),
+        .pc(address),
+        .Instruction(instruction)
+    );
     
     always@(posedge clk)  
     begin
@@ -38,8 +42,8 @@ module IF(clk,reset, taken, branch_address,pc, Instruction, pc_next, Instruction
 
     always @(posedge clk) 
     begin
-        Instruction <=              //I am confused with how we should handle the actual access
-        Instruction_next <=         //I am confused with how we should handle the actual access
+        Instruction <= InstrMem(clk, pc);              //I am confused with how we should handle the actual access
+        Instruction_next <= InstrMem(clk, pc_next);        //I am confused with how we should handle the actual access
     end
 
 endmodule
