@@ -7,7 +7,7 @@ begin
     //Defining instruction memory, although there is address space for 2^32 locations, here we have 255 for simplicity
     reg [31:0] memory [0:255];
 
-    // Initialize the memory with instructions (in hexadecimal format)
+    // Initialize the memory with instructions (in hex)
     initial begin
         memory[0] = 32'h22000005; // ADD R0, R0, #5
         memory[1] = 32'24400003; // SUB R1, R0, #3
