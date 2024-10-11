@@ -53,7 +53,7 @@ module ID(clk, Instruction, Instruction_next)
     //Data|Immediate
     //
 
-    if(1LD == {0,0})                                 //bit 28 is set flags bit
+    if(1LD == {0,0})                                
         case (Instruction[29:25])
             5'b00000:  // Mov Command
                 begin
@@ -70,60 +70,80 @@ module ID(clk, Instruction, Instruction_next)
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11001:  // adds
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b10010:  // sub
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11010:  // subs
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b10011:  // and
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11011:  // ands
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b10100:  // or
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11100:  // ors
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b10101:  // xor
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0]; 
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b11101:  // xors
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+                   assign ALU_OC[2:0] = Instruction[27:25];
+                   assign Special_encoding = 1;
                 end
             5'b00100:  // lsl
                 begin 
@@ -164,65 +184,87 @@ module ID(clk, Instruction, Instruction_next)
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b11001:  // adds
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b10010:  // sub
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b11010:  // subs
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b10011:  // and
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b11011:  // ands
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b10100:  // or
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b11100:  // ors
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b10101:  // xor
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b11101:  // xors
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
                assign op_2_reg[2:0] = Instruction[18:16];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         5'b10110:  // NOT
             begin 
                assign dest_reg[2:0] = Instruction[24:22];
                assign op_1_reg[2:0] = Instruction[21:19];
+               assign ALU_OC[2:0] = Instruction[27:25];
+               assign Special_encoding = 1;
             end
         endcase
     end
@@ -263,26 +305,31 @@ module ID(clk, Instruction, Instruction_next)
                 4'b0000:  // branch unconditional
                     begin 
                         immediate[15:0] = Instruction[15:0];
+                        assign Special_encoding = 0;
                     end
                 4'b0001:  // branch conditional
                     begin 
                         flags[3:0] = Instruction[24:21];
                         immediate[15:0] = Instruction[15:0];
+                        assign Special_encoding = 0;
                     end
                 4'b0010:  // BR
                     begin 
                         pointer_reg[2:0] = Instruction[21:19];
                         immediate[15:0] = Instruction[15:0];
+                        assign Special_encoding = 0;
                     end
                 default:  // Check for NOP and HALT based on individual bits
                     begin
                         if (Instruction[27] == 1'b1)  // NOP
                             begin
                                 // Does nothing, literally!
+                                assign Special_encoding = 0;
                             end
                         else if (Instruction[28] == 1'b1)  // HALT
                             begin
                                 // Sets a flag to stop the CPU from bit 28
+                                assign Special_encoding = 0;
                             end
                     end
             endcase
