@@ -4,12 +4,11 @@
 // Possible future changes -adding relative branching if it isn't handled in SCC
 //
 
-module IF(clk,reset, taken, branch_address,pc, Instruction, pc_next, Instruction_next)
+module IF(clk,reset, pc, Instruction, pc_next, Instruction_next)
 
     input               clk;                    // main clock 
     input               reset;                  // resets pc to known state
-    input               taken;                  // flag to show if  branch is taken
-    input       [31:0]   branch_address;        // branch address
+
     output wire [31:0]   pc;                    // address pointed to in instruction memory
     output      [31:0]   Instruction;           // enable instruction memory fetch
     output wire [31:0]   pc_next;               // address pointed to in instruction memory + 4

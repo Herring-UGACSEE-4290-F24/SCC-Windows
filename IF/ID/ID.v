@@ -25,7 +25,7 @@
 // check bits 31:25 of next instruction and see if it is 1100000 or 1100010 this is unconditonal branch and branch
 // I am unsure how to implement the address saving yet
 
-module ID(clk, Instruction, Instruction_next)
+module ID(clk, Instruction, Instruction_next, 1LD, Special_encoding, 2LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_1_reg, op_2_reg, immediate, offset, flags)
     input clk;
     input [31:0]     Instruction;        //Instruction that was fetched
     input [31:0]     Instruction_next
@@ -38,11 +38,10 @@ module ID(clk, Instruction, Instruction_next)
     output wire [2:0]        pointer_reg;
     output wire [3:0]        op_1_reg;
     output wire [3:0]        op_2_reg;
-
     output wire [15:0]       immediate;
     output wire [15:0]       offset;
     output wire [3:0]        flags;
-    output wire [4:0]        ALU_instruction;
+   
     
     
    
