@@ -41,6 +41,7 @@ module ID(clk, Instruction, Instruction_next)
     output wire [15:0]       immediate;
     output wire [15:0]       offset;
     output wire [3:0]        flags;
+    output wire [4:0]        ALU_instruction;
     
    
     initial  
@@ -70,6 +71,7 @@ module ID(clk, Instruction, Instruction_next)
                    assign dest_reg[2:0] = Instruction[24:22];
                    assign op_1_reg[2:0] = Instruction[21:19];
                    assign immediate[15:0] = Instruction[15:0];
+
                 end
             5'b11001:  // adds
                 begin 
