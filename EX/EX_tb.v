@@ -25,6 +25,7 @@ module EX_tb();
 
     ALU CompToTest(1LD_s, Special_encoding_s, 2LD_s, ALU_OC_s, B_cond_s, dest_reg_s, pointer_reg_s, op_1_reg_s, op_2_reg_s, immediate_s, offset_s, flags_s);
 
+    // Clock generation (I think every testbench needs one)
     always begin
         clk_s <= 0;
         #10;
@@ -32,6 +33,15 @@ module EX_tb();
         #10;
     end
 
-    // Test inputs
+    // Throw in inputs for the EX stage here
     initial begin
-        $dumpvars(0,ALU_tb);
+        $dumpvars(0,EX_tb);
+
+
+
+
+
+        #10;
+        $finish;
+    end
+endmodule
