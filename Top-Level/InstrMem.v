@@ -4,6 +4,7 @@ begin
     input wire [31:0]   address         // 32-bit instruction address
     output reg [31:0]   instruction     // instruction to be executed
 
+<<<<<<< HEAD
     //Defining instruction memory, although there is address space for 2^32 locations, here we have 255 for simplicity
     reg [31:0] memory [0:255];
 
@@ -23,4 +24,8 @@ begin
     always @(posedge clk) begin
         instruction = memory[address[7:0]];  // Memory contains 255 locations, so use bits [7:0] from the address
     end
+=======
+    output [31:0]   instruction     // instruction to be executed
+
+>>>>>>> b944aacfa373753400439313bd12a09f687036eb
 end
