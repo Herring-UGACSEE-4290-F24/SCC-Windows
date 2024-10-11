@@ -34,14 +34,16 @@ module ID(clk, Instruction, Instruction_next)
     output wire [3:0]        2LD;
     output wire [2:0]        ALU_OC;
     output wire [3:0]        B_cond;
-    output wire [2:0]        dest_reg;
+    output wire [3:0]        dest_reg;
     output wire [2:0]        pointer_reg;
-    output wire [2:0]        op_1_reg;
-    output wire [2:0]        op_2_reg;
+    output wire [3:0]        op_1_reg;
+    output wire [3:0]        op_2_reg;
+
     output wire [15:0]       immediate;
     output wire [15:0]       offset;
     output wire [3:0]        flags;
     output wire [4:0]        ALU_instruction;
+    
     
    
     initial  
@@ -59,25 +61,33 @@ module ID(clk, Instruction, Instruction_next)
             5'b00000:  // Mov Command
                 begin
                    assign dest_reg[2:0] = Instruction[24:22];
+                   assign dest_reg[3] = 1;                      // used as enable in top level 
                    assign immediate[15:0] = Instruction[15:0];
                 end
             5'b00001:  // Movt command
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
+                   assign dest_reg[3] = 1;                      // used as enable in top level 
                    assign immediate[15:0] = Instruction[15:0];
                 end
             5'b10001:  // add
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
+                   assign dest_reg[3] = 1;                      // used as enable in top level 
                    assign op_1_reg[2:0] = Instruction[21:19];
+                   assign op_1_reg[3] = 1;                      // used as enable in top level
+
                    assign immediate[15:0] = Instruction[15:0];
                    assign ALU_OC[2:0] = Instruction[27:25];
                    assign Special_encoding = 1;
                 end
             5'b11001:  // adds
                 begin 
-                   assign dest_reg[2:0] = Instruction[24:22];
+                  assign dest_reg[2:0] = Instruction[24:22];
+                   assign dest_reg[3] = 1;                      // used as enable in top level 
                    assign op_1_reg[2:0] = Instruction[21:19];
+                   assign op_1_reg[3] = 1;                      // used as enable in top level
+
                    assign immediate[15:0] = Instruction[15:0];
                    assign ALU_OC[2:0] = Instruction[27:25];
                    assign Special_encoding = 1;
@@ -85,7 +95,9 @@ module ID(clk, Instruction, Instruction_next)
             5'b10010:  // sub
                 begin 
                    assign dest_reg[2:0] = Instruction[24:22];
+                   assign dest_reg[3] = 1;                      // used as enable in top level 
                    assign op_1_reg[2:0] = Instruction[21:19];
+                   assign op_1_reg[3] = 1;                      // used as enable in top level
                    assign immediate[15:0] = Instruction[15:0];
                    assign ALU_OC[2:0] = Instruction[27:25];
                    assign Special_encoding = 1;
