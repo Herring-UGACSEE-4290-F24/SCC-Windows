@@ -22,3 +22,16 @@ module EX_tb();
     wire [0:0]        ;
     wire [0:0]        ;
     wire [0:0]        ;
+
+    ALU CompToTest(1LD_s, Special_encoding_s, 2LD_s, ALU_OC_s, B_cond_s, dest_reg_s, pointer_reg_s, op_1_reg_s, op_2_reg_s, immediate_s, offset_s, flags_s);
+
+    always begin
+        clk_s <= 0;
+        #10;
+        clk_s <= 1;
+        #10;
+    end
+
+    // Test inputs
+    initial begin
+        $dumpvars(0,ALU_tb);
