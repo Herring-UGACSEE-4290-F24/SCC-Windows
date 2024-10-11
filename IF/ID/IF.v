@@ -4,45 +4,39 @@
 // Possible future changes -adding relative branching if it isn't handled in SCC
 //
 
-module IF(clk,reset, pc, Instruction, pc_next, Instruction_next)
+module IF(clk, reset, instruction)
 
-    input               clk;                    // main clock 
-    input               reset;                  // resets pc to known state
+    /===========================================  I/O  ===================================================/
+    input                   clk;                   // main clock 
+    input                   reset;                 // resets pc to known state
 
-    output wire [31:0]   pc;                    // address pointed to in instruction memory
-    output      [31:0]   Instruction;           // enable instruction memory fetch
-    output wire [31:0]   pc_next;               // address pointed to in instruction memory + 4
-    output reg  [31:0]   Instruction_next;      // enable instruction memory fetch
+    output wire [31:0]      pc;                    // address pointed to in instruction memory
+    output wire [31:0]      instruction;           // enable instruction memory fetch
+    /=====================================================================================================/
     
+    //Instantiating instruction memory
     InstrMem instr_mem(
         .clk(clk),
         .pc(address),
-        .Instruction(instruction)
+        .instruction(instruction)
     );
-    
+
+    //Sets PC to 0 initially
+    initial begin 
+        pc <= 0x0000;
+    end
+
     always@(posedge clk)  
     begin
         if(reset)
         begin
-            assign pc = 0x0000;                    // resets progam counter if reset is high
-            assign pc_next = 0x0004;
-        end
-        else if(taken)
-        begin
-            assign pc = branch_address;            // changes program counter to branch_address  (abs branch)
-            assign pc_next = branch_address + 0x0004;
+            assign pc = 0x0000;                 // resets progam counter if reset is high
         end
         else
         begin
-            assign pc = pc + 0x0004;                    // default case: Increment PC by four
-            assign pc_next = pc_next + 0x0004;
+            instruction <= InstrMem(clk, pc);   //Loading instruction with value pointed to by PC
+            assign pc = pc + 0x0004;            // default case: Increment PC by four
         end
-    end
-
-    always @(posedge clk) 
-    begin
-        Instruction <= InstrMem(clk, pc);              //I am confused with how we should handle the actual access
-        Instruction_next <= InstrMem(clk, pc_next);        //I am confused with how we should handle the actual access
     end
 
 endmodule
