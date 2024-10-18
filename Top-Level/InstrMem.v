@@ -14,7 +14,7 @@ module InstrMem(clk, address, instruction);
         memory[1] = 32'h24400003; // SUB R1, R0, #3
         memory[2] = 32'hA8000000; // NOP
         memory[3] = 32'hA000FFFD; // B #-3
-        memory[4] = 32'hA8000000; // NOP
+        memory[4] = 32'hC8000000; // NOP
 
         // Initialize the rest of memory to zero
         for (i = 5; i < 256; i = i + 1) begin

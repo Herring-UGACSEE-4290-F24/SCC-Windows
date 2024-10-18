@@ -76,18 +76,18 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
 
 
     //Instatiate Reg File
-    module RegFile(
-        .clk(clk), 
-        r_addr_0, 
-        r_addr_1, 
-        w_addr, 
-        w_enable, 
-        w_select, 
-        w_alu, 
-        w_id, 
-        r_val_0, 
-        r_val_1
-        );
+    // RegFile reg_file (
+    //     .clk(clk), 
+    //     .r_addr_0(r_addr_0), 
+    //     .r_addr_1(r_addr_1), 
+    //     .w_addr(w_addr), 
+    //     .w_enable(w_enable), 
+    //     .w_select(w_select), 
+    //     .w_alu(w_alu), 
+    //     .w_id(w_id), 
+    //     .r_val_0(r_val_0), 
+    //     .r_val_1(r_val_1)
+    // );
     //Instatiate Module_Execute
 
     //EX instruction_execute(
