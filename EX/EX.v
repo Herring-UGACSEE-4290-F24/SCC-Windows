@@ -1,4 +1,4 @@
-module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_1_reg_value, op_2_reg_value, immediate, offset, flags, ALU_results);
+module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_1_reg_value, op_2_reg_value, immediate, offset, flags, result);
 
     // Just the outputs of decode 
     input wire [1:0]        First_LD;                    
@@ -14,13 +14,13 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
     input wire [15:0]       offset;
     input wire [3:0]        flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
 
-    output wire [32:0]      ALU_results;
+    //output wire [32:0]      ALU_results;
     wire [31:0]             extended_immediate;
-    reg [32:0]              result;
+    output wire [32:0]      result;
+    output wire [32:0]      updated_pc
 
     // Assign the result to ALU_results
-    assign ALU_results = result;
-
+   
     always @(*) begin
         extended_immediate[15:0] = immediate[15:0];
         extended_immediate[31:16] = {16{immediate[15]}};
@@ -86,7 +86,11 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
             if(Second_LD[3])
                 begin
                 flags[3] = result[31];  //Negative
-                                            //Carry logic
+
+
+//=======================Carry logic=====================================================//
+
+
                 if(First_LD[0])         //Reg
                     begin
                         flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31];    //Carry
@@ -157,6 +161,7 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
             case (ALU_OC[2:0])
                 3'b000: begin
                     //branch
+                    updated_pc = 
                 end
                 3'b001: begin
                     // Implement branch conditional

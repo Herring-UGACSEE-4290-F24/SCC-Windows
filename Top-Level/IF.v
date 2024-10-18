@@ -4,16 +4,23 @@
 // Possible future changes -adding relative branching if it isn't handled in SCC
 //
 
-module IF(clk, reset, pc, instruction);
+module IF(clk, reset, br_value, offset, pc, instruction);
 
     /*===========================================  I/O  ===================================================*/
-    input                   clk;                   // main clock 
-    input                   reset;                 // resets pc to known state
+    input                   clk;                   //main clock 
+    input                   reset;                 //resets pc to known state
+    input wire [31:0]       br_value;              //value of pointer reg
+    input wire [31:0]       offset;                //offset used for branching
 
-    output reg [31:0]      pc;                    // address pointed to in instruction memory
+    output reg [31:0]       pc;                    // address pointed to in instruction memory
     output wire [31:0]      instruction;           // enable instruction memory fetch
+
+    
+   
+   
     /*=====================================================================================================*/
     
+
 //Instantiating instruction memory
 InstrMem instr_mem(
     .clk(clk),
@@ -24,9 +31,20 @@ InstrMem instr_mem(
 always @(posedge clk or posedge reset)
     begin
     if (reset) begin
-        pc <= 32'h0000;                 // Resets progam counter if reset is high
-    end else begin
-        pc <= pc + 32'h0004;            // Default case: Increment PC by four
+        pc = 32'h0000;                 // Resets progam counter if reset is high
+        offset = 32'h0000;
+        br_value = 32'h0000;
+    end else if (offset!=0) begin
+        pc = pc + offset;
+        offset = 32'h0000;
+    end
+    else if(br_value !=0) begin
+        pc = br_value + offset;
+        br_value = 32'h0000;
+        offset = 32'h0000;
+    end
+    else begin
+        pc = pc + 32'h0004;            // Default case: Increment PC by four
     end
 end
 
