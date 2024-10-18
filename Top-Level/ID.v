@@ -27,33 +27,32 @@
 
 module ID(
     input [31:0] Instruction,        // Instruction that was fetched
-    input [31:0] Instruction_next,
     output reg [1:0] First_LD,
     output reg Special_encoding,
     output reg [3:0] Second_LD,
     output reg [2:0] ALU_OC,
     output reg [3:0] B_cond,
-    output reg [3:0] dest_reg,
+    output reg [2:0] dest_reg,
     output reg [2:0] pointer_reg,
-    output reg [3:0] op_1_reg,
-    output reg [3:0] op_2_reg,
+    output reg [2:0] op_1_reg,
+    output reg [2:0] op_2_reg,
     output reg [15:0] immediate,
-    output reg [15:0] offset,
     output reg [3:0] flags
 );
 
     always @* begin
         // Default values to prevent latches
         First_LD = Instruction[31:30]; 
-        dest_reg = 4'b0;
-        op_1_reg = 4'b0;
-        op_2_reg = 4'b0;
+        dest_reg = 3'b0;
+        op_1_reg = 3'b0;
+        op_2_reg = 3'b0;
         pointer_reg = 3'b0;
         ALU_OC = 3'b0;
         Special_encoding = 0;
         immediate = 16'b0;
-        offset = 16'b0;
         flags = 4'b0;
+        B_cond = 3'b0;
+        Second_LD = 4'b0;
 
         //
         // Data|Immediate
@@ -62,17 +61,17 @@ module ID(
             case (Instruction[29:25])
                 5'b00000: begin  // Mov Command
                     dest_reg[2:0] = Instruction[24:22];
-                    dest_reg[3] = 1;  // Used as enable in top level 
+                    ;  // Used as enable in top level 
                     immediate = Instruction[15:0];
                 end
                 5'b00001: begin  // Movt Command
                     dest_reg[2:0] = Instruction[24:22];
-                    dest_reg[3] = 1;  // Used as enable in top level 
+                    ;  // Used as enable in top level 
                     immediate = Instruction[15:0];
                 end
                 5'b10001: begin  // add
                     dest_reg[2:0] = Instruction[24:22];
-                    dest_reg[3] = 1;  // Used as enable in top level 
+                    ;  // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
@@ -81,7 +80,7 @@ module ID(
                 end
                 5'b11001: begin  // adds
                     dest_reg[2:0] = Instruction[24:22];
-                    dest_reg[3] = 1;  // Used as enable in top level 
+                    ;  // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
@@ -90,7 +89,7 @@ module ID(
                 end
                 5'b10010: begin  // sub
                     dest_reg[2:0] = Instruction[24:22];
-                    dest_reg[3] = 1;  // Used as enable in top level 
+                    ;  // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
