@@ -10,12 +10,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     output [31:0]   data_addr;       // address pointed to in data memory
     output [31:0]   data_out;        // data to write to memory
 
-
-    //Fetch output declarations
-    wire [31:0]   instruction;           // enable instruction memory fetch
-
-
-
     //Decoder output declarations  (also used in execute as inputs)
 //    wire [1:0]        1LD;                    
 //    wire              Special_encoding;
@@ -40,7 +34,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     IF instruction_fetch(
     .clk(clk),
     .reset(reset), 
-    .instruction(instruction)
+    .instruction(in_mem)
     );
 
 
