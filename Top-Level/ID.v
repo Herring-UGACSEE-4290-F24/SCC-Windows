@@ -61,37 +61,34 @@ module ID(
             case (Instruction[29:25])
                 5'b00000: begin  // Mov Command
                     dest_reg[2:0] = Instruction[24:22];
-                    ;  // Used as enable in top level 
+                    // Used as enable in top level 
                     immediate = Instruction[15:0];
                 end
                 5'b00001: begin  // Movt Command
                     dest_reg[2:0] = Instruction[24:22];
-                    ;  // Used as enable in top level 
+                    // Used as enable in top level 
                     immediate = Instruction[15:0];
                 end
                 5'b10001: begin  // add
                     dest_reg[2:0] = Instruction[24:22];
-                    ;  // Used as enable in top level 
+                    // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
-                    op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
                     ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
                 end
                 5'b11001: begin  // adds
                     dest_reg[2:0] = Instruction[24:22];
-                    ;  // Used as enable in top level 
+                    // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
-                    op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
                     ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
                 end
                 5'b10010: begin  // sub
                     dest_reg[2:0] = Instruction[24:22];
-                    ;  // Used as enable in top level 
+                    // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
-                    op_1_reg[3] = 1;  // Used as enable in top level
                     immediate = Instruction[15:0];
                     ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
