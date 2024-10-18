@@ -3,8 +3,8 @@
 module IF(clk, reset, pc, instruction);
 
     //===========================================  I/O  ===================================================//
-    input                   clk;                   //main clock 
-    input                   reset;                 //resets pc to known state
+    input                   clk;                   // main clock 
+    input                   reset;                 // resets pc to known state
 
     output reg [31:0]       pc;                    // address of next instruction in memory
     output reg [31:0]       instruction;           // fetched instruction
@@ -14,7 +14,7 @@ module IF(clk, reset, pc, instruction);
     reg  [31:0]             br_immediate;          // Non-conditional branch immediate
     //=====================================================================================================//
 
-    //Instantiating instruction memory
+    // Instantiating the instruction memory
     Instruction_and_data instr_mem(
         .mem_Clk(clk),
         .instruction_memory_en(instruction_memory_en),
@@ -22,9 +22,10 @@ module IF(clk, reset, pc, instruction);
         .instruction_memory_v(prefetch)
     );
 
-    //Instruction fetching logic
+    // Instruction fetching logic
     initial begin
         instruction_memory_en = 1'b1;
+        // PC always starts at 0
         pc = 32'h0000;
     end
 
@@ -32,11 +33,11 @@ module IF(clk, reset, pc, instruction);
         begin
         instruction <= prefetch;
         if (reset) begin
-            pc = 32'h0000;                              // Resets progam counter if reset is high
+            pc = 32'h0000;                              // Resets PC if reset is high
         end 
         else if (prefetch[31:25] == 7'b1100000)         // Checking if instruction is unconditional branch
             begin
-            br_immediate = prefetch[15:0];
+            br_immediate = prefetch[15:0];              // Extracting immediate value from instruction
             if (br_immediate[15] == 1'b0)                   
                 begin
                 pc = pc + br_immediate;                 // Incrementing PC by positive offset

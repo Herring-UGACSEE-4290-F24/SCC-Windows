@@ -1,18 +1,20 @@
 module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_1_reg_value, op_2_reg_value, immediate, offset, flags, result);
 
+    //===========================================  I/O  ===================================================//
     // Just the outputs of decode 
-    input wire [1:0]        First_LD;                    
-    input wire              Special_encoding;
-    input wire [3:0]        Second_LD;
-    input wire [2:0]        ALU_OC;
-    input wire [3:0]        B_cond;
+    input wire [1:0]        First_LD;           // First Level Decoding         
+    input wire              Special_encoding;   // Encoding for ALU usage
+    input wire [3:0]        Second_LD;          // Second Level Decoding
+    input wire [2:0]        ALU_OC;             // ALU Operation Commands 
+    input wire [3:0]        B_cond;             
     input wire [2:0]        dest_reg;
     input wire [2:0]        pointer_reg;
     input wire [31:0]       op_1_reg_value;
     input wire [31:0]       op_2_reg_value;
     input wire [15:0]       immediate;
     input wire [15:0]       offset;
-    input wire [3:0]        flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+    input wire [3:0]        flags;              // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
+    /*=====================================================================================================*/
 
     //output wire [32:0]      ALU_results;
     wire [31:0]             extended_immediate;
@@ -22,6 +24,7 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
     // Assign the result to ALU_results
    
     always @(*) begin
+        // Sign extend immediates to 32 bits
         extended_immediate[15:0] = immediate[15:0];
         extended_immediate[31:16] = {16{immediate[15]}};
         if (Special_encoding) begin
@@ -82,34 +85,34 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
                 end
                 default: result = result; // Default case for unspecified ALU_OC values
             endcase
-
+            // 2nd LD to determine flags
             if(Second_LD[3])
                 begin
-                flags[3] = result[31];  //Negative
+                flags[3] = result[31];  // Negative
 
 
 //=======================Carry logic=====================================================//
 
 
-                if(First_LD[0])         //Reg
+                if(First_LD[0])         // Reg
                     begin
-                        flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31];    //Carry
+                        flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31];    // Carry
                     end
-                else                    //Immediate  
+                else                    // Immediate  
                     begin
-                        flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31];    //Carry
+                        flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31];    // Carry
                     end
                
                 if(result[31:0] = 32'b0)
                     begin
-                    flags[1] = 1;    //Zero
+                    flags[1] = 1;    // Zero
                     end
                 else
                     begin
                     flags[1] = 0;
                     end
 
-                flags[0] = result[32];  //Overflow
+                flags[0] = result[32];  // Overflow
                 end
         end
         else if (First_LD == 2'b00) begin
@@ -160,20 +163,20 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
             // Branching and System calls default
             case (ALU_OC[2:0])
                 3'b000: begin
-                    //branch
+                    // [put branch code here]
                     updated_pc = 
                 end
                 3'b001: begin
                     // Implement branch conditional
 
                     case (flags[3:0])              //N, C, Z, V
-                        4'b0000: begin             //beq
+                        4'b0000: begin             // beq
                         if(flags[1])
                             begin
                           //branch  
                             end
                         end
-                        4'b0001:begin             //bne
+                        4'b0001:begin             // bne
                         if(!flags[1])
                             begin
                             //branch
