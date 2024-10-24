@@ -59,7 +59,7 @@ module EX(
     // Assign the result to ALU_results
  
    initial begin
-    result = 'h00000000;
+    result = 'h000000000;
     conditional_flags = 'b0000;
    end
 
@@ -109,22 +109,30 @@ always @(*) begin
             default: result = result; // Default case for unspecified ALU_OC values
         endcase
 
-        case (Second_LD[3])
-            1'b1: conditional_flags[3] = result[31];  // Negative
-        endcase
+//                               flag [3]     flag[2]                     flag[1]          flag[0]
+//======= The System Flags are N (Negative), C (Carry, Unsigned Overflow), Z (Zero), and V (Signed Overflow) =======\\
+//                                                                                                                  \\
 
-        case (First_LD[0])
-            1'b1: conditional_flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // Carry for Register
+        if (Second_LD[3]) begin         //Set flags bit is high
 
-            1'b0: conditional_flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // Carry for Immediate
-        endcase
+            conditional_flags[3] = result[31];  // Negative
 
-        case (result[31:0])
-            32'b0: conditional_flags[1] = 1;  // Zero
-            default: conditional_flags[1] = 0;
-        endcase
+            conditional_flags[2] = result[32];  // Carry (unsigned overflow)
 
-        conditional_flags[0] = result[32];  // Overflow
+            case (result[31:0])
+                32'b0: conditional_flags[1] = 1;  // Zero
+
+                default: conditional_flags[1] = 0;
+            endcase
+
+            case (First_LD[0])
+                1'b1: conditional_flags[0] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // V for Register
+
+                1'b0: conditional_flags[0] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // V for Immediate
+            endcase
+        end
+
+       
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG
         case (ALU_OC[2:0])
