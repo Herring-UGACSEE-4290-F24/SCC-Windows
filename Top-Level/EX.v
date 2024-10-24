@@ -12,25 +12,30 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
     input wire [31:0]       op_2_reg_value;
     input wire [15:0]       immediate;
     input wire [15:0]       offset;
-    input wire [3:0]        flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+   
+    output reg [3:0]        flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
 
     //output wire [32:0]      ALU_results;
     wire [31:0]             extended_immediate;
-    output wire [32:0]      result;
-    output wire [32:0]      updated_pc
-
+    output reg [32:0]      result;
+    //output wire [31:0]      updated_pc;
+    assign extended_immediate[15:0] = immediate[15:0];
+    assign extended_immediate[31:16] = {16{immediate[15]}};
     // Assign the result to ALU_results
-   
+   initial begin
+    result = 'h00000000;
+   end
+
+
     always @(*) begin
-        extended_immediate[15:0] = immediate[15:0];
-        extended_immediate[31:16] = {16{immediate[15]}};
+        
         if (Special_encoding) begin
             // Ironically Special Encoding high means ALU, so these are ALU FUNCTIONS
             case (ALU_OC[2:0])
                 3'b001: begin // ADD Control Command
                     if (First_LD[0] == 1'b0) // Immediate is being used
                        begin
-                        result = op_1_reg_value + extended_immediate;
+                       result = op_1_reg_value + extended_immediate;
                        end
                     else // Register is being used
                         begin
@@ -86,9 +91,9 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
             if(Second_LD[3])
                 begin
                 flags[3] = result[31];  //Negative
+                end
 
-
-//=======================Carry logic=====================================================//
+  
 
 
                 if(First_LD[0])         //Reg
@@ -100,7 +105,7 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
                         flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31];    //Carry
                     end
                
-                if(result[31:0] = 32'b0)
+                if(result[31:0] == 32'b0)
                     begin
                     flags[1] = 1;    //Zero
                     end
@@ -110,48 +115,40 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
                     end
 
                 flags[0] = result[32];  //Overflow
-                end
+                //end
         end
         else if (First_LD == 2'b00) begin
             // Non-ALU functions with REG
             case (ALU_OC[2:0])
                 3'b000: begin
                     // Implement MOV operation
-                    op_1_reg_value=extended_immediate;
+                   result=extended_immediate;
                 end
                 3'b001: begin
                     // Implement MOVT command
-                    op_1_reg_value[31:16]=immediate[15:0];
+                    result[31:16]=immediate[15:0];
                 end
                 3'b100: begin
                     // Implement LSL (Logical Shift Left)
-                    for(i = immediate; i>0, i--)
-                        begin
-                            op_1_reg_value = op_1_reg_value<<1;
-                        end
-                    result = op_1_reg_value;
-                    result[32] = 0;
+                    result = op_1_reg_value<<immediate;
+                    result[32] = 'b0;
                     
 
                        
                 end
                 3'b101: begin
                     // Implement LSR (Logical Shift Right)
-                    for(i = immediate; i>0, i--)
-                        begin
-                            op_1_reg_value = op_1_reg_value>>1;
-                        end
-                    result = op_1_reg_value;
+                    result = op_1_reg_value>>immediate;
                     result[32] = 0;
 
                 end
                 3'b010: begin
                     // Implement CLR (Clear)
-                    op_1_reg_value[31:0] = 'h00000000;
+                    result[31:0] = 'h00000000;
                 end
                 3'b011: begin
                     // Implement SET
-                    op_1_reg_value[31:0] = 'h11111111;
+                 result[31:0] = 'h11111111;
                 end
                 default: result = 32'b0;
             endcase
@@ -161,7 +158,7 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
             case (ALU_OC[2:0])
                 3'b000: begin
                     //branch
-                    updated_pc = 
+                    //updated_pc = 
                 end
                 3'b001: begin
                     // Implement branch conditional
@@ -239,8 +236,8 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
                             //branch
                             end
                         end
-                        end
-                        4'b1100:             // branch greater than
+                        
+                        4'b1100: begin            // branch greater than
                         if((flags[1] == 0) && (flags[3]==flags[0]))
                             begin
                             //branch
@@ -251,16 +248,18 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
                             begin
                             //branch
                             end
-                        4'b1110:             // branch always
+                        4'b1110: begin            // branch always
                             //branch
-                        4'b1111:             // b
+                        end
+                        4'b1111: begin            // b
                             //nop
-
+                        end
+                    endcase
                 end
-                3'b010: begin
-                    // Implement branch command 'br'
+                default: 
+                begin
+                result = result; // NOP
                 end
-                default: result = result; // NOP
             endcase
         end
     end

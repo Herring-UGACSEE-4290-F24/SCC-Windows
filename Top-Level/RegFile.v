@@ -17,6 +17,13 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     //Defining register file, there are 2^3 = 8 registers, each 32 bits wide
     reg [31:0] registers [0:7];
 
+   // Initial block to reset all registers to 0 at start
+    // initial begin
+    //     integer i;
+    //     for (i = 0; i < 8; i = i + 1) begin
+    //         registers[i] = 32'b0;
+    //     end
+    // end
     //Assigns read port 0/1 output the value of the register pointed to by read port 0/1 input address, when the address is updated.
     //(Reads are performed asynchronously)
     //always @(r_addr_0) begin
