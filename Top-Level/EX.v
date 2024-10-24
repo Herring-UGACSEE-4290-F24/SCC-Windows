@@ -63,242 +63,205 @@ module EX(
     conditional_flags = 'b0000;
    end
 
+always @(*) begin
+    if (Special_encoding) begin
+        // Special Encoding high means ALU, so these are ALU FUNCTIONS
+        write_enable = 1;
+        case (ALU_OC[2:0])
+            3'b001: begin // ADD Control Command
+                case (First_LD[0])
+                    1'b0: result = op_1_reg_value + extended_immediate; // Immediate is being used
 
-    always @(*) begin
-        
-        if (Special_encoding) begin
-            // Ironically Special Encoding high means ALU, so these are ALU FUNCTIONS
-            write_enable = 1;
-            case (ALU_OC[2:0])
-                3'b001: begin // ADD Control Command
-                    if (First_LD[0] == 1'b0) // Immediate is being used
-                       begin
-                       result = op_1_reg_value + extended_immediate;
-                       end
-                    else // Register is being used
-                        begin
-                        result = op_1_reg_value + op_2_reg_value;
-                        end
-                end
-                3'b010: begin // SUB Control Command
-                    if (First_LD[0] == 1'b0)
-                        begin
-                        result = op_1_reg_value - extended_immediate;
-                        end
-                    else
-                        begin
-                        result = op_1_reg_value - op_2_reg_value;
-                        end
-                end
-                3'b011: begin // AND Control Command
-                    if (First_LD[0] == 1'b0)
-                        begin
-                        result = op_1_reg_value & extended_immediate;
-                        end
-                    else
-                        result = op_1_reg_value & op_2_reg_value;
-                end
-                3'b100: begin // OR Control Command
-                    if (First_LD[0] == 1'b0)
-                        begin
-                        result = op_1_reg_value | extended_immediate;
-                        end
-                    else
-                        begin
-                        result = op_1_reg_value | op_2_reg_value;
-                        end
-                end
-                3'b101: begin // XOR Control Command
-                    if (First_LD[0] == 1'b0)
-                        begin
-                        result = op_1_reg_value ^ extended_immediate;
-                        end
-                    else
-                        begin
-                        result = op_1_reg_value ^ op_2_reg_value;
-                        end
-                end
-                3'b110: begin // NOT Control Command
-                    begin
-                    result = ~op_1_reg_value;
-                    end
-                end
-                default: result = result; // Default case for unspecified ALU_OC values
-            endcase
-
-            if(Second_LD[3])
-                begin
-                conditional_flags[3] = result[31];  //Negative
-                end
-
-  
-
-
-            if(First_LD[0])         //Reg
-                    begin
-                        conditional_flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31];    //Carry
-                    end
-            else                    //Immediate  
-                    begin
-                        conditional_flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31];    //Carry
+                    1'b1: result = op_1_reg_value + op_2_reg_value; // Register is being used
+                endcase
             end
-               
-            if(result[31:0] == 32'b0)
-                    begin
-                    conditional_flags[1] = 1;    //Zero
+            3'b010: begin // SUB Control Command
+                case (First_LD[0])
+                    1'b0: result = op_1_reg_value - extended_immediate; // Immediate is being used
+
+                    1'b1: result = op_1_reg_value - op_2_reg_value; // Register is being used
+                endcase
+            end
+            3'b011: begin // AND Control Command
+                case (First_LD[0])
+                    1'b0: result = op_1_reg_value & extended_immediate; // Immediate is being used
+
+                    1'b1: result = op_1_reg_value & op_2_reg_value; // Register is being used
+                endcase
+            end
+            3'b100: begin // OR Control Command
+                case (First_LD[0])
+                    1'b0: result = op_1_reg_value | extended_immediate; // Immediate is being used
+
+                    1'b1: result = op_1_reg_value | op_2_reg_value; // Register is being used
+                endcase
+            end
+            3'b101: begin // XOR Control Command
+                case (First_LD[0])
+                    1'b0: result = op_1_reg_value ^ extended_immediate; // Immediate is being used
+
+                    1'b1: result = op_1_reg_value ^ op_2_reg_value; // Register is being used
+                endcase
+            end
+            3'b110: begin // NOT Control Command
+                result = ~op_1_reg_value;
+            end
+            default: result = result; // Default case for unspecified ALU_OC values
+        endcase
+
+        case (Second_LD[3])
+            1'b1: conditional_flags[3] = result[31];  // Negative
+        endcase
+
+        case (First_LD[0])
+            1'b1: conditional_flags[2] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // Carry for Register
+
+            1'b0: conditional_flags[2] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // Carry for Immediate
+        endcase
+
+        case (result[31:0])
+            32'b0: conditional_flags[1] = 1;  // Zero
+            default: conditional_flags[1] = 0;
+        endcase
+
+        conditional_flags[0] = result[32];  // Overflow
+    end else if (First_LD == 2'b00) begin
+        // Non-ALU functions with REG
+        case (ALU_OC[2:0])
+            3'b000: result = extended_immediate; // MOV operation
+
+            3'b001: result[31:16] = immediate[15:0]; // MOVT command
+
+            3'b100: begin // LSL (Logical Shift Left)
+                result = op_1_reg_value << immediate;
+                result[32] = 1'b0;
+            end
+            3'b101: begin // LSR (Logical Shift Right)
+                result = op_1_reg_value >> immediate;
+                result[32] = 1'b0;
+            end
+            3'b010: result[31:0] = 'h00000000; // CLR (Clear)
+            
+            3'b011: result[31:0] = 'h11111111; // SET
+            default: result = 32'b0;
+        endcase
+    end else begin
+        // Branching and System calls default
+        case (ALU_OC[2:0])
+            3'b000: begin
+                // Branching code
+            end
+            3'b001: begin
+                // Implement branch conditional
+                case (conditional_flags[3:0]) // N, C, Z, V
+                    4'b0000: begin // beq
+                        case (conditional_flags[1])
+                            1'b1: begin
+                                // branch
+                            end
+                        endcase
                     end
-            else
-                    begin
-                    conditional_flags[1] = 0;
+                    4'b0001: begin // bne
+                        case (!conditional_flags[1])
+                            1'b1: begin
+                                // branch
+                            end
+                        endcase
                     end
-
-            conditional_flags[0] = result[32];  //Overflow
-                //end
-        end
-        else if (First_LD == 2'b00) begin
-            // Non-ALU functions with REG
-            case (ALU_OC[2:0])
-                3'b000: begin
-                    // Implement MOV operation
-                   result=extended_immediate;
-                end
-                3'b001: begin
-                    // Implement MOVT command
-                    result[31:16]=immediate[15:0];
-                end
-                3'b100: begin
-                    // Implement LSL (Logical Shift Left)
-                    result = op_1_reg_value<<immediate;
-                    result[32] = 'b0;
-                    
-
-                       
-                end
-                3'b101: begin
-                    // Implement LSR (Logical Shift Right)
-                    result = op_1_reg_value>>immediate;
-                    result[32] = 0;
-
-                end
-                3'b010: begin
-                    // Implement CLR (Clear)
-                    result[31:0] = 'h00000000;
-                end
-                3'b011: begin
-                    // Implement SET
-                 result[31:0] = 'h11111111;
-                end
-                default: result = 32'b0;
-            endcase
-        end
-        else begin
-            // Branching and System calls default
-            case (ALU_OC[2:0])
-                3'b000: begin
-                    //branch
-                    //updated_pc = 
-                end
-                3'b001: begin
-                    // Implement branch conditional
-
-                    case (conditional_flags[3:0])              //N, C, Z, V
-                        4'b0000: begin             //beq
-                        if(conditional_flags[1])
-                            begin
-                          //branch  
+                    4'b0010: begin // branch carry set
+                        case (conditional_flags[2])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0001:begin             //bne
-                        if(!conditional_flags[1])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b0011: begin // branch carry clear
+                        case (!conditional_flags[2])
+                            1'b1: begin
+                                // branch
                             end
-                        end                       
-                        4'b0010:begin             // branch carry set
-                        if(conditional_flags[2])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b0100: begin // branch negative
+                        case (conditional_flags[3])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0011: begin            // branch carry clear
-                        if(!conditional_flags[2])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b0101: begin // branch positive
+                        case (!conditional_flags[3])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0100: begin             // branch negative
-                         if(conditional_flags[3])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b0110: begin // branch overflow set
+                        case (conditional_flags[0])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0101: begin            // branch positive
-                         if(!conditional_flags[3])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b0111: begin // branch overflow clear
+                        case (!conditional_flags[0])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0110: begin           // branch overflow set
-                        if(conditional_flags[0])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1000: begin // branch unsigned higher
+                        case (conditional_flags[2] && !conditional_flags[1])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b0111: begin             // branch overflow clear
-                        if(!conditional_flags[0])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1001: begin // branch unsigned lower or same
+                        case (!(conditional_flags[2] && !conditional_flags[1]))
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b1000: begin           // branch unsigned higher aka carry = 1 z==0
-                        if(conditional_flags[2] && (!conditional_flags[1]))
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1010: begin // branch signed greater than or equal
+                        case (conditional_flags[3] == conditional_flags[0])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b1001: begin            // branch unsigned lower or same aka !(c==1 && z==0)
-                        if(!(conditional_flags[2] &&(!conditional_flags[1])))
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1011: begin // branch signed less than or equal
+                        case (conditional_flags[3] != conditional_flags[0])
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b1010: begin            // branch signed greater than or equal
-                        if(conditional_flags[3]==conditional_flags[0])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1100: begin // branch greater than
+                        case ((conditional_flags[1] == 0) && (conditional_flags[3] == conditional_flags[0]))
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        4'b1011: begin             // branch signed less than or equal
-                        if(conditional_flags[3]!=conditional_flags[0])
-                            begin
-                            //branch
+                        endcase
+                    end
+                    4'b1101: begin // branch less than or equal
+                        case (!((conditional_flags[1] == 0) && (conditional_flags[3] == conditional_flags[0])))
+                            1'b1: begin
+                                // branch
                             end
-                        end
-                        
-                        4'b1100: begin            // branch greater than
-                        if((conditional_flags[1] == 0) && (conditional_flags[3]==conditional_flags[0]))
-                            begin
-                            //branch
-                            end
-                        end
-                        4'b1101:             // branch less than or equal
-                        if(!((conditional_flags[1] == 0) && (conditional_flags[3]==conditional_flags[0])))
-                            begin
-                            //branch
-                            end
-                        4'b1110: begin            // branch always
-                            //branch
-                        end
-                        4'b1111: begin            // b
-                            //nop
-                        end
-                    endcase
-                end
-                default: 
-                begin
-                result = result; // NOP
-                end
-            endcase
-        end
+                        endcase
+                    end
+                    4'b1110: begin // branch always
+                        // branch
+                    end
+                    4'b1111: begin // nop
+                        // nop
+                    end
+                endcase
+            end
+            default: result = result; // NOP
+        endcase
     end
+end
 endmodule
