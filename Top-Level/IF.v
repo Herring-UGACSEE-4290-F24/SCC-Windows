@@ -1,36 +1,27 @@
 // Instruction Fetch Implementation
 
-module IF(clk, reset, pc, instruction);
+module IF(clk, reset, prefetch, pc, instruction);
 
     //===========================================  I/O  ===================================================//
     input                   clk;                   //main clock 
     input                   reset;                 //resets pc to known state
+    input wire [31:0]       prefetch;              // instruction pre-fetched one ahead
 
     output reg [31:0]       pc;                    // address of next instruction in memory
     output reg [31:0]       instruction;           // fetched instruction
 
-    wire [31:0]             prefetch;              // instruction pre-fetched one ahead 
-    reg                     instruction_memory_en; // enables reading from instruction memory
     reg  [31:0]             br_immediate;          // Non-conditional branch immediate
     //=====================================================================================================//
 
-    //Instantiating instruction memory
-    Instruction_and_data instr_mem(
-        .mem_Clk(clk),
-        .instruction_memory_en(instruction_memory_en),
-        .instruction_memory_a(pc),
-        .instruction_memory_v(prefetch)
-    );
-
     //Instruction fetching logic
     initial begin
-        instruction_memory_en = 1'b1;
         pc = 32'h0000;
     end
 
     always @(posedge clk or posedge reset)
         begin
         instruction <= prefetch;
+
         if (reset) begin
             pc = 32'h0000;                              // Resets progam counter if reset is high
         end 

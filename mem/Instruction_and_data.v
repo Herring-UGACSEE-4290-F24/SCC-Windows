@@ -14,7 +14,7 @@ reg [7:0] memory [0:(2**16)-1] ; //Maximum array to hold both instruction and da
 initial begin
   $readmemh("output.mem", memory);
   end
-always @(mem_Clk) begin
+always @(posedge mem_Clk) begin
     if(instruction_memory_en)begin //Grabs 32 bit instruction
     instruction_memory_v[31:24] <= memory[instruction_memory_a];
     instruction_memory_v[23:16] <= memory[instruction_memory_a+1];
