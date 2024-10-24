@@ -1,4 +1,20 @@
-module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, pointer_reg, op_1_reg_value, op_2_reg_value, immediate, offset, flags, result);
+module EX(
+    First_LD, 
+    Special_encoding, 
+    Second_LD, 
+    ALU_OC, 
+    B_cond,
+    dest_reg, 
+    pointer_reg, 
+    op_1_reg_value, 
+    op_2_reg_value, 
+    immediate, 
+    offset,
+    r_val_0, 
+    r_val_1, 
+    w_alu,
+    flags, 
+    result);
 
     // Just the outputs of decode 
     input wire [1:0]        First_LD;                    
@@ -12,15 +28,25 @@ module EX(First_LD, Special_encoding, Second_LD, ALU_OC, B_cond, dest_reg, point
     input wire [31:0]       op_2_reg_value;
     input wire [15:0]       immediate;
     input wire [15:0]       offset;
+    input wire [31:0]       r_val_0 ;
+    input wire [31:0]       r_val_1 ;
+    input wire [31:0]       w_alu;
    
     output reg [3:0]        flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+    output reg [32:0]      result;
+
 
     //output wire [32:0]      ALU_results;
     wire [31:0]             extended_immediate;
-    output reg [32:0]      result;
+   
     //output wire [31:0]      updated_pc;
     assign extended_immediate[15:0] = immediate[15:0];
     assign extended_immediate[31:16] = {16{immediate[15]}};
+   
+
+    assign  op_1_reg_value = r_val_0;
+    assign  op_2_reg_value = r_val_1;
+    assign w_alu = result[31:0];
     // Assign the result to ALU_results
    initial begin
     result = 'h00000000;

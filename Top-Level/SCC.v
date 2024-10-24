@@ -29,7 +29,13 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [31:0]       op_1_reg_value;
     wire [31:0]       op_2_reg_value;
 
+    //Reg file input and output declarations
+    wire [31:0]       r_val_0;
+    wire [31:0]       r_val_1;
 
+    wire [2:0]        r_addr_0;
+    wire [2:0]        r_addr_1;
+    wire [2:0]        w_addr;
 
     //Instatiate Module IF
     IF instruction_fetch(
@@ -42,6 +48,9 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     //Instatiate Module Decode
     ID instruction_decode( 
     .Instruction(in_mem), 
+    .r_addr_0(r_addr_0), 
+    .r_addr_1(r_addr_1),
+    .w_addr(w_addr), 
     .First_LD(First_LD), 
     .Special_encoding(Special_encoding),
     .Second_LD(Second_LD),
@@ -60,15 +69,15 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     //Instatiate Reg File
      RegFile reg_file (
          .clk(clk), 
-         .r_addr_0(op_1_reg), 
-         .r_addr_1(op_2_reg), 
-         .w_addr(dest_reg), 
+         .r_addr_0(r_addr_0), 
+         .r_addr_1(r_addr_1), 
+         .w_addr(w_addr), 
          .w_enable(w_enable), 
          .w_select(w_select), 
          .w_alu(w_alu), 
          .w_id(w_id), 
-         .r_val_0(op_1_reg_value), 
-         .r_val_1(op_2_reg_value)
+         .r_val_0(r_val_0), 
+         .r_val_1(r_val_1)
         );
     //Instatiate Module_Execute
 
@@ -84,6 +93,9 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .op_2_reg_value(op_2_reg_value),
     .immediate(immediate), 
     .offset(offset), 
+    .r_val_0(r_val_0), 
+    .r_val_1(r_val_1), 
+    .w_alu(w_alu),
     .flags(flags),
     .result(ALU_results)
     );
