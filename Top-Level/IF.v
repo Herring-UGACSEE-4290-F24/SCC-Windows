@@ -3,38 +3,18 @@
 module IF(clk, reset, prefetch, pc, instruction);
 
     //===========================================  I/O  ===================================================//
-<<<<<<< HEAD
     input                   clk;                   //main clock 
     input                   reset;                 //resets pc to known state
     input wire [31:0]       prefetch;              // instruction pre-fetched one ahead
-=======
-    input                   clk;                   // main clock 
-    input                   reset;                 // resets pc to known state
->>>>>>> f05c27de08aef4627cb07b9d1c65a7084f599018
-
     output reg [31:0]       pc;                    // address of next instruction in memory
     output reg [31:0]       instruction;           // fetched instruction
 
     reg  [31:0]             br_immediate;          // Non-conditional branch immediate
     //=====================================================================================================//
 
-<<<<<<< HEAD
-    //Instruction fetching logic
-    initial begin
-=======
-    // Instantiating the instruction memory
-    Instruction_and_data instr_mem(
-        .mem_Clk(clk),
-        .instruction_memory_en(instruction_memory_en),
-        .instruction_memory_a(pc),
-        .instruction_memory_v(prefetch)
-    );
-
     // Instruction fetching logic
     initial begin
-        instruction_memory_en = 1'b1;
         // PC always starts at 0
->>>>>>> f05c27de08aef4627cb07b9d1c65a7084f599018
         pc = 32'h0000;
     end
 
