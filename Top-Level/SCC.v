@@ -36,7 +36,9 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [2:0]        r_addr_0;
     wire [2:0]        r_addr_1;
     wire [2:0]        w_addr;
-
+    wire              w_enable;    //Enables writing to regs (active high)
+    wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
+    wire [31:0]       w_alu;
     //Instatiate Module IF
     IF instruction_fetch(
     .clk(clk),
@@ -96,6 +98,8 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .r_val_0(r_val_0), 
     .r_val_1(r_val_1), 
     .w_alu(w_alu),
+    .w_enable(w_enable),
+    .w_select(w_select),
     .flags(flags),
     .result(ALU_results)
     );
