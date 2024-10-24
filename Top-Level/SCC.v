@@ -10,6 +10,9 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     output [31:0]   data_addr;       // address pointed to in data memory
     output [31:0]   data_out;        // data to write to memory
     /*=====================================================================================================*/
+  
+    //Instruction Fetch declarations
+    wire [31:0]     prefetch;        // prefetched instruction from mem into fetch
 
     //Decoder output declarations  (also used in execute as inputs)
     wire [1:0]        First_LD;                    
@@ -25,17 +28,21 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [15:0]       offset;
     wire [3:0]        flags;
 
-
-    //Execute input and output declarations
-//    wire [15:0]       op_1_reg_value
-//    wire [15:0]       op_2_reg_value
-
+    //Instantiate Instruction/Data Memory
+    Instruction_and_data instr_mem(
+        .mem_Clk(clk),
+        .instruction_memory_en(1'b1),
+        .instruction_memory_a(in_mem_addr),
+        .instruction_memory_v(prefetch)
+    );
 
     //Instatiate Module IF
     IF instruction_fetch(
-    .clk(clk),
-    .reset(reset), 
-    .instruction(in_mem)
+        .clk(clk),
+        .reset(reset),
+        .prefetch(prefetch),
+        .pc(in_mem_addr),
+        .instruction(in_mem)
     );
 
 
@@ -54,18 +61,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .immediate(immediate), 
     .flags(flags)
     );
-
-    //Should access reg files depending on which regs use aka for now check ths msb of op_1_reg if high fetch from reg file and pass into execute
-//    if(op_1_reg[3] == 0)
-//        begin
-
-//        end
-
-//     if(op_2_reg[3] == 0)
-//        begin
-
-//        end
-
 
     //Instatiate Reg File
      RegFile reg_file (

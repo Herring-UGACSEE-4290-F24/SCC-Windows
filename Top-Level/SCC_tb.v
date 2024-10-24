@@ -27,10 +27,14 @@ module SCC_tb;
     );
 
     initial begin
+        $dumpvars(0,SCC_tb);
         clk = 1'b0;
         reset = 1'b1;
-        #10 reset = 1'b0;
-        $dumpvars(0,SCC_tb);
+        #10 clk = 1'b1;
+        #5 reset = 1'b0;
+        #5 clk = 1'b0;
+        #10 clk = 1'b1;
+        #10 clk = 1'b0;
         #10 clk = 1'b1;
         #10 clk = 1'b0;
         #10 clk = 1'b1;
