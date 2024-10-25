@@ -134,11 +134,21 @@ always @(*) begin
        
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG
-        write_enable = 0;
+        write_enable = 1;
         case (ALU_OC[2:0])
-            3'b000: result = extended_immediate; // MOV operation
+            3'b000: begin
+                result[15:0] = immediate[15:0]; // MOV operation
+                r_val_0 = dest_reg;
+                result[31:16] = 
+              
 
-            3'b001: result[31:16] = immediate[15:0]; // MOVT command
+            end
+
+            3'b001: begin
+                result[31:16] = immediate[15:0]; // MOVT command
+                
+
+            end
 
             3'b100: begin // LSL (Logical Shift Left)
                 result = op_1_reg_value << immediate;
@@ -155,6 +165,7 @@ always @(*) begin
         endcase
     end else begin
         // Branching and System calls default
+        write_enable = 0;
         case (ALU_OC[2:0])
             3'b000: begin
                 // Branching code
