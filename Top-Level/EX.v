@@ -13,6 +13,7 @@ module EX(
     r_val_0, 
     r_val_1, 
     w_alu,
+    w_id,
     w_enable,
     w_select,
     flags, 
@@ -34,6 +35,7 @@ module EX(
     input wire [31:0]       r_val_0;
     input wire [31:0]       r_val_1;
     input wire [31:0]       w_alu;
+    input wire [31:0]       w_id;
     input wire              w_enable;    //Enables writing to regs (active high)
     input wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     input wire [3:0]        flags;       // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
@@ -53,6 +55,7 @@ module EX(
     assign  op_1_reg_value = r_val_0;
     assign  op_2_reg_value = r_val_1;
     assign w_alu = result[31:0];
+    assign w_id = result[31:0];
     assign w_enable = write_enable;
     assign flags [3:0] = cpsr_flags;
     // Assign the result to ALU_results
@@ -138,24 +141,24 @@ always @(*) begin
         case (ALU_OC[2:0])
             3'b000: begin
                 result[15:0] = immediate[15:0]; // MOV operation
-                r_val_0 = dest_reg;
-                result[31:16] = 
+
               
 
             end
 
             3'b001: begin
                 result[31:16] = immediate[15:0]; // MOVT command
+                result[15:0] = result[15:0];
                 
 
             end
 
             3'b100: begin // LSL (Logical Shift Left)
-                result = op_1_reg_value << immediate;
+                result = op_1_reg_value <<< immediate;
                 result[32] = 1'b0;
             end
             3'b101: begin // LSR (Logical Shift Right)
-                result = op_1_reg_value >> immediate;
+                result = op_1_reg_value >>> immediate;
                 result[32] = 1'b0;
             end
             3'b010: result[31:0] = 'h00000000; // CLR (Clear)
