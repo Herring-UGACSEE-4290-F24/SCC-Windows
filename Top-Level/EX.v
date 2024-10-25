@@ -42,7 +42,7 @@ module EX(
 
     output reg [32:0]       result;
     reg                     write_enable;
-    reg [3:0]        conditional_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+    reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
     //output wire [32:0]      ALU_results;
     
     //output wire [31:0]      updated_pc;
@@ -54,12 +54,13 @@ module EX(
     assign  op_2_reg_value = r_val_1;
     assign w_alu = result[31:0];
     assign w_enable = write_enable;
-    assign flags [3:0] = conditional_flags;
+    assign flags [3:0] = cpsr_flags;
     // Assign the result to ALU_results
  
    initial begin
     result = 'h000000000;
-    conditional_flags = 'b0000;
+    cpsr_flags = 'b0000;
+    write_enable = 0;
    end
 
 always @(*) begin
@@ -114,25 +115,26 @@ always @(*) begin
 
         if (Second_LD[3]) begin         //Set flags bit is high
 
-            conditional_flags[3] = result[31];  // Negative
+            cpsr_flags[3] = result[31];  // Negative
 
-            conditional_flags[2] = result[32];  // Carry (unsigned overflow)
+            cpsr_flags[2] = result[32];  // Carry (unsigned overflow)
 
             case (result[31:0])
-                32'b0: conditional_flags[1] = 1;  // Zero
+                32'b0: cpsr_flags[1] = 1;  // Zero
 
-                default: conditional_flags[1] = 0;
+                default: cpsr_flags[1] = 0;
             endcase
 
             case (First_LD[0])
-                1'b1: conditional_flags[0] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // V for Register
+                1'b1: cpsr_flags[0] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // V for Register
 
-                1'b0: conditional_flags[0] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // V for Immediate
+                1'b0: cpsr_flags[0] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // V for Immediate
             endcase
         end
        
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG
+        write_enable = 0;
         case (ALU_OC[2:0])
             3'b000: result = extended_immediate; // MOV operation
 
@@ -159,100 +161,100 @@ always @(*) begin
             end
             3'b001: begin
                 // Implement branch conditional
-                case (conditional_flags[3:0]) // N, C, Z, V
+                case (cpsr_flags[3:0]) // N, C, Z, V
                     4'b0000: begin // beq
-                        case (conditional_flags[1])
+                        case (cpsr_flags[1])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0001: begin // bne
-                        case (!conditional_flags[1])
+                        case (!cpsr_flags[1])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0010: begin // branch carry set
-                        case (conditional_flags[2])
+                        case (cpsr_flags[2])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0011: begin // branch carry clear
-                        case (!conditional_flags[2])
+                        case (!cpsr_flags[2])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0100: begin // branch negative
-                        case (conditional_flags[3])
+                        case (cpsr_flags[3])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0101: begin // branch positive
-                        case (!conditional_flags[3])
+                        case (!cpsr_flags[3])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0110: begin // branch overflow set
-                        case (conditional_flags[0])
+                        case (cpsr_flags[0])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b0111: begin // branch overflow clear
-                        case (!conditional_flags[0])
+                        case (!cpsr_flags[0])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1000: begin // branch unsigned higher
-                        case (conditional_flags[2] && !conditional_flags[1])
+                        case (cpsr_flags[2] && !cpsr_flags[1])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1001: begin // branch unsigned lower or same
-                        case (!(conditional_flags[2] && !conditional_flags[1]))
+                        case (!(cpsr_flags[2] && !cpsr_flags[1]))
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1010: begin // branch signed greater than or equal
-                        case (conditional_flags[3] == conditional_flags[0])
+                        case (cpsr_flags[3] == cpsr_flags[0])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1011: begin // branch signed less than or equal
-                        case (conditional_flags[3] != conditional_flags[0])
+                        case (cpsr_flags[3] != cpsr_flags[0])
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1100: begin // branch greater than
-                        case ((conditional_flags[1] == 0) && (conditional_flags[3] == conditional_flags[0]))
+                        case ((cpsr_flags[1] == 0) && (cpsr_flags[3] == cpsr_flags[0]))
                             1'b1: begin
                                 // branch
                             end
                         endcase
                     end
                     4'b1101: begin // branch less than or equal
-                        case (!((conditional_flags[1] == 0) && (conditional_flags[3] == conditional_flags[0])))
+                        case (!((cpsr_flags[1] == 0) && (cpsr_flags[3] == cpsr_flags[0])))
                             1'b1: begin
                                 // branch
                             end

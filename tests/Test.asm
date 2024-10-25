@@ -2,8 +2,10 @@ main:
     ADD R0, R0, #5
     SUB R1, R0, #6
     MOV R0, #0
-    B main
+    B label
     MOV R0, #0
     NOP
-    BR R0
+label:
+    ADD R3, R1, #7
+    NOP
     HALT

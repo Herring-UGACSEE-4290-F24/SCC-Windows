@@ -33,7 +33,7 @@ module ID(
     input [2:0]        w_addr,
     output reg [1:0] First_LD,       // First Level Decoding
     output reg Special_encoding,     // Encoding for ALU usage
-    output reg [3:0] Second_LD,      // Second Level Decoding
+    output wire  [3:0] Second_LD,      // Second Level Decoding
     output reg [2:0] ALU_OC,         // ALU Operation Commands 
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
@@ -48,7 +48,7 @@ module ID(
     assign r_addr_0 = op_1_reg;
     assign r_addr_1 = op_2_reg;
     assign w_addr = dest_reg;
-
+    assign Second_LD = Instruction[28:25];
     always @* begin
         // Default values to prevent latches
         First_LD = Instruction[31:30]; 
@@ -61,7 +61,7 @@ module ID(
         immediate = 16'b0;
         flags = 4'b0;
         B_cond = 3'b0;
-        Second_LD = 4'b0;
+       
 
         //
         // Data|Immediate
