@@ -27,12 +27,11 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     //always @(r_addr_1) begin
         assign r_val_1 = registers[r_addr_1[2:0]]; //Read port 1
     //end
-
+    integer i;
       initial begin                                          
         //$dumpvars(0, registers[0], registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]); 
-
-        for (integer i = 0; i < 8; i = i + 1) begin
-        registers[i] = 32'b0;
+        for (i = 0; i < 8; i = i + 1) begin
+            registers[i] = 32'b0;
         end
     end
 

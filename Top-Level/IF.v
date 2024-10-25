@@ -3,8 +3,8 @@
 module IF(clk, reset, prefetch, pc, instruction);
 
     //===========================================  I/O  ===================================================//
-    input                   clk;                   //main clock 
-    input                   reset;                 //resets pc to known state
+    input                   clk;                   // main clock 
+    input                   reset;                 // resets pc to known state
     input wire [31:0]       prefetch;              // instruction pre-fetched one ahead
     output reg [31:0]       pc;                    // address of next instruction in memory
     output reg [31:0]       instruction;           // fetched instruction
