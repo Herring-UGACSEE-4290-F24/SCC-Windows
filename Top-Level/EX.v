@@ -18,12 +18,13 @@ module EX(
     flags, 
     result);
 
+    //===========================================  I/O  ===================================================//
     // Just the outputs of decode 
-    input wire [1:0]        First_LD;                    
-    input wire              Special_encoding;
-    input wire [3:0]        Second_LD;
-    input wire [2:0]        ALU_OC;
-    input wire [3:0]        B_cond;
+    input wire [1:0]        First_LD;           // First Level Decoding         
+    input wire              Special_encoding;   // Encoding for ALU usage
+    input wire [3:0]        Second_LD;          // Second Level Decoding
+    input wire [2:0]        ALU_OC;             // ALU Operation Commands 
+    input wire [3:0]        B_cond;             
     input wire [2:0]        dest_reg;
     input wire [2:0]        pointer_reg;
     input wire [31:0]       op_1_reg_value;
@@ -35,8 +36,7 @@ module EX(
     input wire [31:0]       w_alu;
     input wire              w_enable;    //Enables writing to regs (active high)
     input wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
-    input wire [3:0]        flags;
-
+    input wire [3:0]        flags;       // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
 
     wire [31:0]             extended_immediate;
 
@@ -45,7 +45,6 @@ module EX(
     reg [3:0]        conditional_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
     //output wire [32:0]      ALU_results;
     
-   
     //output wire [31:0]      updated_pc;
     assign extended_immediate[15:0] = immediate[15:0];
     assign extended_immediate[31:16] = {16{immediate[15]}};
@@ -131,7 +130,6 @@ always @(*) begin
                 1'b0: conditional_flags[0] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // V for Immediate
             endcase
         end
-
        
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG

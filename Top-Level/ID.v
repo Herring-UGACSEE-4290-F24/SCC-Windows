@@ -25,15 +25,16 @@
 // check bits 31:25 of next instruction and see if it is 1100000 or 1100010 this is unconditonal branch and branch
 // I am unsure how to implement the address saving yet
 
+//===========================================  I/O  ===================================================//
 module ID(
     input [31:0] Instruction,        // Instruction that was fetched
     input [2:0]     r_addr_0,
     input [2:0]     r_addr_1,
     input [2:0]        w_addr,
-    output reg [1:0] First_LD,
-    output reg Special_encoding,
-    output reg [3:0] Second_LD,
-    output reg [2:0] ALU_OC,
+    output reg [1:0] First_LD,       // First Level Decoding
+    output reg Special_encoding,     // Encoding for ALU usage
+    output reg [3:0] Second_LD,      // Second Level Decoding
+    output reg [2:0] ALU_OC,         // ALU Operation Commands 
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
     output reg [2:0] pointer_reg,
@@ -42,6 +43,7 @@ module ID(
     output reg [15:0] immediate,
     output reg [3:0] flags
 );
+/*=====================================================================================================*/
     
     assign r_addr_0 = op_1_reg;
     assign r_addr_1 = op_2_reg;
