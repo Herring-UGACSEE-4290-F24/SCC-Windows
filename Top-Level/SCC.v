@@ -20,13 +20,28 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [3:0]        Second_LD;
     wire [2:0]        ALU_OC;
     wire [3:0]        B_cond;
-    wire [3:0]        dest_reg;
+    wire [2:0]        dest_reg;
     wire [2:0]        pointer_reg;
-    wire [3:0]        op_1_reg;
-    wire [3:0]        op_2_reg;
+    wire [2:0]        op_1_reg;
+    wire [2:0]        op_2_reg;
     wire [15:0]       immediate;
     wire [15:0]       offset;
     wire [3:0]        flags;
+
+    //Execute input and output declarations
+    wire [31:0]       op_1_reg_value;
+    wire [31:0]       op_2_reg_value;
+
+    //Reg file input and output declarations
+    wire [31:0]       r_val_0;
+    wire [31:0]       r_val_1;
+
+    wire [2:0]        r_addr_0;
+    wire [2:0]        r_addr_1;
+    wire [2:0]        w_addr;
+    wire              w_enable;    //Enables writing to regs (active high)
+    wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
+    wire [31:0]       w_alu;
 
     //Instantiate Instruction/Data Memory
     Instruction_and_data instr_mem(
@@ -49,6 +64,9 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     //Instatiate Module Decode
     ID instruction_decode( 
     .Instruction(in_mem), 
+    .r_addr_0(r_addr_0), 
+    .r_addr_1(r_addr_1),
+    .w_addr(w_addr), 
     .First_LD(First_LD), 
     .Special_encoding(Special_encoding),
     .Second_LD(Second_LD),
@@ -77,20 +95,25 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
         );
     //Instatiate Module_Execute
 
-    // EX instruction_execute(
-    // .First_LD(First_LD), 
-    // .Special_encoding(Special_encoding),
-    // .Second_LD(Second_LD),
-    // .ALU_OC(ALU_OC),
-    // .B_cond(B_cond),
-    // .dest_reg(dest_reg), 
-    // .pointer_reg(pointer_reg),
-    // .op_1_reg_value(op_1_reg_value),
-    // .op_2_reg_value(op_2_reg_value),
-    // .immediate(immediate), 
-    // .offset(offset), 
-    // .flags(flags),
-    // .ALU_results(ALU_results)
-    // );
+    EX instruction_execute(
+    .First_LD(First_LD), 
+    .Special_encoding(Special_encoding),
+    .Second_LD(Second_LD),
+    .ALU_OC(ALU_OC),
+    .B_cond(B_cond),
+    .dest_reg(dest_reg), 
+    .pointer_reg(pointer_reg),
+    .op_1_reg_value(op_1_reg_value),
+    .op_2_reg_value(op_2_reg_value),
+    .immediate(immediate), 
+    .offset(offset), 
+    .r_val_0(r_val_0), 
+    .r_val_1(r_val_1), 
+    .w_alu(w_alu),
+    .w_enable(w_enable),
+    .w_select(w_select),
+    .flags(flags),
+    .result(ALU_results)
+    );
 
 endmodule

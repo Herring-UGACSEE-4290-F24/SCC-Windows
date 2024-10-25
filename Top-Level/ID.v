@@ -28,6 +28,9 @@
 //===========================================  I/O  ===================================================//
 module ID(
     input [31:0] Instruction,        // Instruction that was fetched
+    input [2:0]     r_addr_0,
+    input [2:0]     r_addr_1,
+    input [2:0]        w_addr,
     output reg [1:0] First_LD,       // First Level Decoding
     output reg Special_encoding,     // Encoding for ALU usage
     output reg [3:0] Second_LD,      // Second Level Decoding
@@ -41,7 +44,10 @@ module ID(
     output reg [3:0] flags
 );
 /*=====================================================================================================*/
-
+    
+    assign r_addr_0 = op_1_reg;
+    assign r_addr_1 = op_2_reg;
+    assign w_addr = dest_reg;
 
     always @* begin
         // Default values to prevent latches

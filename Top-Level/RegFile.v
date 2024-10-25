@@ -17,6 +17,7 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     //Defining register file, there are 2^3 = 8 registers, each 32 bits wide
     reg [31:0] registers [0:7];
 
+
     //Assigns read port 0/1 output the value of the register pointed to by read port 0/1 input address, when the address is updated.
     //(Reads are performed asynchronously)
     //always @(r_addr_0) begin
@@ -26,6 +27,14 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     //always @(r_addr_1) begin
         assign r_val_1 = registers[r_addr_1[2:0]]; //Read port 1
     //end
+
+      initial begin                                          
+        //$dumpvars(0, registers[0], registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]); 
+
+        for (integer i = 0; i < 8; i = i + 1) begin
+        registers[i] = 32'b0;
+        end
+    end
 
     // Write value from w_alu or w_id, dependent on control line w_select, to register pointed to by w_addr, if w_enable is active.
     //(Writes are performed synchronously) 
