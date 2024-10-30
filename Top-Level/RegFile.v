@@ -29,10 +29,11 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     //end
     integer i;
       initial begin                                          
-        //$dumpvars(0, registers[0], registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]); 
+       
         for (i = 0; i < 8; i = i + 1) begin
             registers[i] = 32'b0;
         end
+          $dumpvars(0, registers[0], registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]); 
     end
 
     // Write value from w_alu or w_id, dependent on control line w_select, to register pointed to by w_addr, if w_enable is active.
