@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module Instruction_and_data
 (
   input mem_Clk,
@@ -14,12 +16,13 @@ reg [7:0] memory [0:(2**16)-1] ; //Maximum array to hold both instruction and da
 initial begin
   $readmemh("output.mem", memory);
   end
-always @(posedge mem_Clk) begin
+always @(*) begin
     if(instruction_memory_en)begin //Grabs 32 bit instruction
     instruction_memory_v[31:24] <= memory[instruction_memory_a];
     instruction_memory_v[23:16] <= memory[instruction_memory_a+1];
     instruction_memory_v[15:8] <= memory[instruction_memory_a+2];
     instruction_memory_v[7:0] <= memory[instruction_memory_a+3];
+    #2;
     end
     else if (~instruction_memory_en) begin //When low the SCC program pauses until set back to high which continues fetching instructions
     instruction_memory_v <= 'hFFFFFFFF;
