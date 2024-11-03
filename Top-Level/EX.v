@@ -43,6 +43,7 @@ module EX(
     wire [31:0]             extended_immediate;
 
     output reg [32:0]       result;
+    
     reg                     write_enable;
     reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
     //output wire [32:0]      ALU_results;
@@ -142,23 +143,21 @@ always @(*) begin
             3'b000: begin
                 result[15:0] = immediate[15:0]; // MOV operation
 
-              
-
             end
 
             3'b001: begin
                 result[31:16] = immediate[15:0]; // MOVT command
-                result[15:0] = result[15:0];
+                result[15:0] = 'h0000;
                 
 
             end
 
             3'b100: begin // LSL (Logical Shift Left)
-                result = op_1_reg_value <<< immediate;
-                result[32] = 1'b0;
+               result = op_1_reg_value << immediate;
+               result[32] = 1'b0;
             end
             3'b101: begin // LSR (Logical Shift Right)
-                result = op_1_reg_value >>> immediate;
+                result = op_1_reg_value >> immediate;
                 result[32] = 1'b0;
             end
             3'b010: result[31:0] = 'h00000000; // CLR (Clear)

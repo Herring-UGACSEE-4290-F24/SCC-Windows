@@ -1,6 +1,14 @@
 main:
-    MOV R2, #0x1111
     NOP
+    MOVT R1, #0x1111
+    MOV R2, #0x1110
+    MOV R1, #0x0001
+    ADD R2, R2, R1
+
+    LSL R2, R2, #4
+    LSR R2, R2, #4
+    NOP
+
     ADD R2, R2, #1
     CLR R2
     SET R1
