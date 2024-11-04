@@ -43,7 +43,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     wire [31:0]       w_alu;
     wire [31:0]       w_id;
-
+    wire [3:0]        conditional_flags;
     //Instantiate Instruction/Data Memory
     Instruction_and_data instr_mem(
         .mem_Clk(clk),
@@ -57,6 +57,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
         .clk(clk),
         .reset(reset),
         .prefetch(prefetch),
+        .conditional_flags(conditional_flags),
         .pc(in_mem_addr),
         .instruction(in_mem)
     );
@@ -115,6 +116,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .w_enable(w_enable),
     .w_select(w_select),
     .flags(flags),
+    .conditional_flags(conditional_flags),
     .result(ALU_results)
     );
 

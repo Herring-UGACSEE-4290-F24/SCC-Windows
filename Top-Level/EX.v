@@ -17,6 +17,7 @@ module EX(
     w_enable,
     w_select,
     flags, 
+    conditional_flags,
     result);
 
     //===========================================  I/O  ===================================================//
@@ -39,13 +40,13 @@ module EX(
     input wire              w_enable;    //Enables writing to regs (active high)
     input wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     input wire [3:0]        flags;       // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
-
+    input wire [3:0]        conditional_flags;
     wire [31:0]             extended_immediate;
 
     output reg [32:0]       result;
     
     reg                     write_enable;
-    reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+    reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, V  sadly not the same as arm8 hard to remember
     //output wire [32:0]      ALU_results;
     
     //output wire [31:0]      updated_pc;
@@ -58,7 +59,7 @@ module EX(
     assign w_alu = result[31:0];
     assign w_id = result[31:0];
     assign w_enable = write_enable;
-    assign flags [3:0] = cpsr_flags;
+    assign conditional_flags [3:0] = cpsr_flags;
     // Assign the result to ALU_results
  
    initial begin
