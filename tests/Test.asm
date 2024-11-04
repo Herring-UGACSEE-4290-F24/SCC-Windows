@@ -4,7 +4,10 @@ main:
     MOV R2, #0x1111
     CMP R1, R2, R1
     B.eq label
-    B.ne end
+    NOP
+    NOP
+    NOP
+    NOP
 
 label:
     CLR R2

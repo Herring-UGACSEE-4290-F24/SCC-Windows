@@ -34,7 +34,19 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                     pc = pc + br_immediate;                // Decrementing PC by negative offset
                     end
             end
-            if (prefetch[31:25 == 7'b1100001])        // Conditional branching
+    end
+
+    always @(posedge clk or posedge reset)
+        begin
+        instruction <= prefetch;
+        br_immediate = prefetch[15:0]; 
+        if (reset) begin
+            pc = 32'h0000;                              // Resets PC if reset is high
+        end 
+        if (prefetch[31:25 != 7'b1100001])begin
+            pc = pc + 32'h0004;                         // Default case: Increment PC by four
+        end
+        else         // Conditional branching
                 begin
                     case (prefetch[28:25]) // N, C, Z, V
                     4'b0000: begin // beq
@@ -256,17 +268,6 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                     end
                 endcase
                 end
-    end
-
-    always @(posedge clk or posedge reset)
-        begin
-        instruction <= prefetch;
-
-        if (reset) begin
-            pc = 32'h0000;                              // Resets PC if reset is high
-        end 
-        else begin
-            pc = pc + 32'h0004;                         // Default case: Increment PC by four
-        end
+  
     end
 endmodule
