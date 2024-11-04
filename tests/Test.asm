@@ -12,9 +12,13 @@ main:
 label:
     CLR R2
     MOV R2, #0x1111
-    ADD R2, R2, R2
+    CMP R2, R2, #0x2111
+    B.mi   main 
     CLR R2
-
+    NOP
+    NOP
+    NOP
+    NOP
 end:
     NOP
     HALT
