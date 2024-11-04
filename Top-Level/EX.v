@@ -13,9 +13,11 @@ module EX(
     r_val_0, 
     r_val_1, 
     w_alu,
+    w_id,
     w_enable,
     w_select,
     flags, 
+    conditional_flags,
     result);
 
     //===========================================  I/O  ===================================================//
@@ -34,15 +36,18 @@ module EX(
     input wire [31:0]       r_val_0;
     input wire [31:0]       r_val_1;
     input wire [31:0]       w_alu;
+    input wire [31:0]       w_id;
     input wire              w_enable;    //Enables writing to regs (active high)
     input wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     input wire [3:0]        flags;       // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
-
+    input wire [3:0]        conditional_flags;
     wire [31:0]             extended_immediate;
 
     output reg [32:0]       result;
+    
     reg                     write_enable;
-    reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, v  sadly not the same as arm8 hard to remember
+    reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, V  sadly not the same as arm8 hard to remember
+
     //output wire [32:0]      ALU_results;
     
     //output wire [31:0]      updated_pc;
@@ -53,8 +58,9 @@ module EX(
     assign  op_1_reg_value = r_val_0;
     assign  op_2_reg_value = r_val_1;
     assign w_alu = result[31:0];
+    assign w_id = result[31:0];
     assign w_enable = write_enable;
-    assign flags [3:0] = cpsr_flags;
+    assign conditional_flags [3:0] = cpsr_flags;
     // Assign the result to ALU_results
  
    initial begin
@@ -112,7 +118,7 @@ always @(*) begin
 //                               flag [3]     flag[2]                     flag[1]          flag[0]
 //======= The System Flags are N (Negative), C (Carry, Unsigned Overflow), Z (Zero), and V (Signed Overflow) =======\\
 //                                                                                                                  \\
-
+        #1
         if (Second_LD[3]) begin         //Set flags bit is high
 
             cpsr_flags[3] = result[31];  // Negative
@@ -134,15 +140,24 @@ always @(*) begin
        
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG
-        write_enable = 0;
-        case (ALU_OC[2:0])
-            3'b000: result = extended_immediate; // MOV operation
+        write_enable = 1;
 
-            3'b001: result[31:16] = immediate[15:0]; // MOVT command
+        case (ALU_OC[2:0])
+            3'b000: begin
+                result[15:0] = immediate[15:0]; // MOV operation
+
+            end
+
+            3'b001: begin
+                result[31:16] = immediate[15:0]; // MOVT command
+                result[15:0] = 'h0000;
+                
+
+            end
 
             3'b100: begin // LSL (Logical Shift Left)
-                result = op_1_reg_value << immediate;
-                result[32] = 1'b0;
+               result = op_1_reg_value << immediate;
+               result[32] = 1'b0;
             end
             3'b101: begin // LSR (Logical Shift Right)
                 result = op_1_reg_value >> immediate;
@@ -157,6 +172,7 @@ always @(*) begin
         endcase
     end else begin
         // Branching and System calls default
+        write_enable = 0;
         case (ALU_OC[2:0])
             3'b000: begin
                 // Branching code

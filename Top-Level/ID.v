@@ -34,7 +34,9 @@ module ID(
     output reg [1:0] First_LD,       // First Level Decoding
     output reg Special_encoding,     // Encoding for ALU usage
     output wire  [3:0] Second_LD,      // Second Level Decoding
-    output reg [2:0] ALU_OC,         // ALU Operation Commands 
+
+    output wire [2:0] ALU_OC,         // ALU Operation Commands 
+
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
     output reg [2:0] pointer_reg,
@@ -60,6 +62,9 @@ module ID(
     assign r_addr_1 = op_2_reg;
     assign w_addr = dest_reg;
     assign Second_LD = Instruction[28:25];
+
+    assign ALU_OC = Instruction[27:25];
+
     always @* begin
         // Default values to prevent latches
         First_LD = Instruction[31:30]; 
@@ -67,7 +72,6 @@ module ID(
         op_1_reg = 3'b0;
         op_2_reg = 3'b0;
         pointer_reg = 3'b0;
-        ALU_OC = 3'b0;
         Special_encoding = 0;
         immediate = 16'b0;
         flags = 4'b0;
@@ -94,7 +98,7 @@ module ID(
                     // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                    
                     Special_encoding = 1;
                 end
                 5'b11001: begin  // adds
@@ -102,7 +106,6 @@ module ID(
                     // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
                 end
                 5'b10010: begin  // sub
@@ -110,56 +113,55 @@ module ID(
                     // Used as enable in top level 
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
                 end
                 5'b11010: begin  // subs
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                  
                     Special_encoding = 1;
                 end
                 5'b10011: begin  // and
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                   
                     Special_encoding = 1;
                 end
                 5'b11011: begin  // ands
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                  
                     Special_encoding = 1;
                 end
                 5'b10100: begin  // or
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+               
                     Special_encoding = 1;
                 end
                 5'b11100: begin  // ors
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                
                     Special_encoding = 1;
                 end
                 5'b10101: begin  // xor
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0]; 
-                    ALU_OC = Instruction[27:25];
+                   
                     Special_encoding = 1;
                 end
                 5'b11101: begin  // xors
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
-                    ALU_OC = Instruction[27:25];
+                   
                     Special_encoding = 1;
                 end
                 5'b00100: begin  // lsl
@@ -196,13 +198,12 @@ module ID(
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
                     op_2_reg[2:0] = Instruction[18:16];
-                    ALU_OC = Instruction[27:25];
                     Special_encoding = 1;
                 end
                 5'b10110: begin  // NOT
                     dest_reg[2:0] = Instruction[24:22];
                     op_1_reg[2:0] = Instruction[21:19];
-                    ALU_OC = Instruction[27:25];
+                  
                     Special_encoding = 1;
                 end
             endcase
