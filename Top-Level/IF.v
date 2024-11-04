@@ -43,12 +43,12 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
         if (reset) begin
             pc = 32'h0000;                              // Resets PC if reset is high
         end 
-        if (prefetch[31:25 != 7'b1100001])begin
+        if (prefetch[31:25] != 7'b1100001)begin
             pc = pc + 32'h0004;                         // Default case: Increment PC by four
         end
         else         // Conditional branching
                 begin
-                    case (prefetch[28:25]) // N, C, Z, V
+                    case (instruction[28:25]) // N, C, Z, V
                     4'b0000: begin // beq
                         case (conditional_flags[1])
                             1'b1: begin

@@ -117,7 +117,7 @@ always @(*) begin
 //                               flag [3]     flag[2]                     flag[1]          flag[0]
 //======= The System Flags are N (Negative), C (Carry, Unsigned Overflow), Z (Zero), and V (Signed Overflow) =======\\
 //                                                                                                                  \\
-
+        #1
         if (Second_LD[3]) begin         //Set flags bit is high
 
             cpsr_flags[3] = result[31];  // Negative

@@ -1,0 +1,51 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Nov 04 03:31:10 2024
+[*]
+[dumpfile] "C:\Users\tycoo\OneDrive\Documents\GitHub\SCC-Windows\dump.lx2"
+[dumpfile_mtime] "Mon Nov 04 03:27:15 2024"
+[dumpfile_size] 1392
+[savefile] "C:\Users\tycoo\OneDrive\Documents\GitHub\SCC-Windows\urmom.gtkw"
+[timestart] 0
+[size] 1536 793
+[pos] -113 -113
+*-16.497276 90000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] SCC_tb.
+[treeopen] SCC_tb.single_cycle_computer.
+[sst_width] 197
+[signals_width] 206
+[sst_expanded] 1
+[sst_vpaned_height] 221
+@28
+SCC_tb.clk[0]
+@22
+SCC_tb.single_cycle_computer.instruction_fetch.prefetch[31:0]
+SCC_tb.single_cycle_computer.instruction_decode.Instruction[31:0]
+@28
+SCC_tb.single_cycle_computer.instruction_decode.op_1_reg[2:0]
+SCC_tb.single_cycle_computer.instruction_decode.op_2_reg[2:0]
+SCC_tb.single_cycle_computer.instruction_decode.dest_reg[2:0]
+@800023
+SCC_tb.single_cycle_computer.instruction_execute.conditional_flags[3:0]
+@29
+(0)SCC_tb.single_cycle_computer.instruction_execute.conditional_flags[3:0]
+(1)SCC_tb.single_cycle_computer.instruction_execute.conditional_flags[3:0]
+(2)SCC_tb.single_cycle_computer.instruction_execute.conditional_flags[3:0]
+(3)SCC_tb.single_cycle_computer.instruction_execute.conditional_flags[3:0]
+@1001201
+-group_end
+@22
+SCC_tb.single_cycle_computer.instruction_execute.immediate[15:0]
+SCC_tb.single_cycle_computer.instruction_execute.op_1_reg_value[31:0]
+SCC_tb.single_cycle_computer.instruction_execute.op_2_reg_value[31:0]
+SCC_tb.single_cycle_computer.instruction_execute.result[32:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[0][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[1][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[2][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[3][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[4][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[5][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[6][31:0]
+SCC_tb.single_cycle_computer.reg_file.\registers[7][31:0]
+[pattern_trace] 1
+[pattern_trace] 0
