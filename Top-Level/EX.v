@@ -152,6 +152,8 @@ always @(*) begin
             
             3'b011: result[31:0] = 'h11111111; // SET
             default: result = 32'b0;
+
+
         endcase
     end else begin
         // Branching and System calls default
