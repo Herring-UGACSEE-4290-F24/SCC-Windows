@@ -34,27 +34,14 @@ module ID(
     output reg [1:0] First_LD,       // First Level Decoding
     output reg Special_encoding,     // Encoding for ALU usage
     output wire  [3:0] Second_LD,      // Second Level Decoding
-
     output wire [2:0] ALU_OC,         // ALU Operation Commands 
-
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
     output reg [2:0] pointer_reg,
     output reg [2:0] op_1_reg,
     output reg [2:0] op_2_reg,
     output reg [15:0] immediate,
-    output reg [3:0] flags,
-    //Memory access
-    input [31:0]       data_memory_in_v, //data memory read value
-    output reg [31:0]       data_memory_a, //data memory access address
-    output reg [31:0]       data_memory_out_v, //data memory write value
-    output reg             data_memory_read, //data memory read enable
-    output reg             data_memory_write, //data memory write enable
-    output reg [31:0]       r_val_0, //Register value 0
-    output reg [31:0]      w_id, //register write value from ID
-    output reg            w_select, //mux select to write to reg file
-    output reg            w_enable //enable writing to reg file
-
+    output reg [3:0] flags
 );
 /*=====================================================================================================*/
     
@@ -62,9 +49,7 @@ module ID(
     assign r_addr_1 = op_2_reg;
     assign w_addr = dest_reg;
     assign Second_LD = Instruction[28:25];
-
     assign ALU_OC = Instruction[27:25];
-
     always @* begin
         // Default values to prevent latches
         First_LD = Instruction[31:30]; 
@@ -213,25 +198,14 @@ module ID(
         // Load/Store (bits 29-26 don't care)
         //
         else if (First_LD == 2'b10) begin
-            if (Instruction[25] == 1'b1) begin //store
+            if (Instruction[25] == 1'b1) begin
                 dest_reg[2:0] = Instruction[24:22];
                 pointer_reg[2:0] = Instruction[21:19];
                 immediate = Instruction[15:0];
-                //Still need store logic, inputs and outputs should be setup,
-                //logic should be reverse of load
-            
-            end else begin //load
+            end else begin
                 dest_reg[2:0] = Instruction[24:22];
                 pointer_reg[2:0] = Instruction[21:19];
                 immediate = Instruction[15:0];
-
-                data_memory_read = 1'b1;    //enable read from data mem
-                op_1_reg = pointer_reg;  //set reg read addr to pointer_reg
-                data_memory_a <= r_val_0 + immediate;        //set data read address to register value + offset
-                w_select <= 1'b1;    //enable writing to reg from ID
-                w_id <= data_memory_in_v; //set ID write to reg file to value read from data mem
-                w_enable <= 1'b1; //enables write, value will be written to reg file at next clock edge
-
             end
         end
 
