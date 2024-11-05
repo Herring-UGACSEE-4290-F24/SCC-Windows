@@ -38,21 +38,10 @@ module ID(
 
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
-    output reg [2:0] pointer_reg,
     output reg [2:0] op_1_reg,
     output reg [2:0] op_2_reg,
     output reg [15:0] immediate,
-    output reg [3:0] flags,
-    //Memory access
-    input [31:0]       data_memory_in_v, //data memory read value
-    output reg [31:0]       data_memory_a, //data memory access address
-    output reg [31:0]       data_memory_out_v, //data memory write value
-    output reg             data_memory_read, //data memory read enable
-    output reg             data_memory_write, //data memory write enable
-    output reg [31:0]       r_val_0, //Register value 0
-    output reg [31:0]      w_id, //register write value from ID
-    output reg            w_select, //mux select to write to reg file
-    output reg            w_enable //enable writing to reg file
+    output reg [3:0] flags
 
 );
 /*=====================================================================================================*/
@@ -69,7 +58,6 @@ module ID(
         dest_reg = 3'b0;
         op_1_reg = 3'b0;
         op_2_reg = 3'b0;
-        pointer_reg = 3'b0;
         Special_encoding = 0;
         immediate = 16'b0;
         flags = 4'b0;
@@ -84,11 +72,13 @@ module ID(
                 5'b00000: begin  // Mov Command
                     dest_reg[2:0] = Instruction[24:22];
                     // Used as enable in top level 
+                    op_1_reg[2:0] = Instruction[24:22];
                     immediate = Instruction[15:0];
                 end
                 5'b00001: begin  // Movt Command
                     dest_reg[2:0] = Instruction[24:22];
                     // Used as enable in top level 
+                    op_1_reg[2:0] = Instruction[24:22];
                     immediate = Instruction[15:0];
                 end
                 5'b10001: begin  // add
@@ -212,23 +202,14 @@ module ID(
         //
         else if (First_LD == 2'b10) begin
             if (Instruction[25] == 1'b1) begin //store
-                dest_reg[2:0] = Instruction[24:22];
-                pointer_reg[2:0] = Instruction[21:19];
-                immediate = Instruction[15:0];
-                //Still need store logic, inputs and outputs should be setup,
-                //logic should be reverse of load
+                op_1_reg[2:0] = Instruction[24:22]; //dest
+                op_2_reg[2:0] = Instruction[21:19]; //pointer
+                immediate = Instruction[15:0];      //offset
             
             end else begin //load
-                dest_reg[2:0] = Instruction[24:22];
-                pointer_reg[2:0] = Instruction[21:19];
-                immediate = Instruction[15:0];
-
-                data_memory_read = 1'b1;    //enable read from data mem
-                op_1_reg = pointer_reg;  //set reg read addr to pointer_reg
-                data_memory_a <= r_val_0 + immediate;        //set data read address to register value + offset
-                w_select <= 1'b1;    //enable writing to reg from ID
-                w_id <= data_memory_in_v; //set ID write to reg file to value read from data mem
-                w_enable <= 1'b1; //enables write, value will be written to reg file at next clock edge
+                dest_reg[2:0] = Instruction[24:22]; //dest
+                op_1_reg[2:0] = Instruction[21:19]; //pointer
+                immediate = Instruction[15:0];      //offset
 
             end
         end
@@ -246,7 +227,7 @@ module ID(
                     immediate = Instruction[15:0];
                 end
                 4'b0010: begin  // BR
-                    pointer_reg[2:0] = Instruction[21:19];
+                    op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
                 end
                 default: begin  // Check for NOP and HALT

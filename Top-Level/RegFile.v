@@ -1,4 +1,4 @@
-module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id, r_val_0, r_val_1);
+module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_other, r_val_0, r_val_1);
 
     /*===========================================  I/O  ===================================================*/
     input                    clk;         //Clock signal
@@ -8,7 +8,7 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
     input                    w_enable;    //Enables writing to regs (active high)
     input                    w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     input [31:0]             w_alu;       //Write data to reg from ALU stage
-    input [31:0]             w_id;        //Write data to reg from ID stage
+    input [31:0]             w_other;        //Write data to reg from ID stage
 
     output wire [31:0]       r_val_0;     //Read port 0 output value
     output wire [31:0]       r_val_1;     //Read port 1 output value
@@ -36,12 +36,12 @@ module RegFile(clk, r_addr_0, r_addr_1, w_addr, w_enable, w_select, w_alu, w_id,
           $dumpvars(0, registers[0], registers[1], registers[2], registers[3], registers[4], registers[5], registers[6], registers[7]); 
     end
 
-    // Write value from w_alu or w_id, dependent on control line w_select, to register pointed to by w_addr, if w_enable is active.
+    // Write value from w_alu or w_other, dependent on control line w_select, to register pointed to by w_addr, if w_enable is active.
     //(Writes are performed synchronously) 
     always @(posedge clk) begin
         if (w_enable) begin 
             if (w_select)
-                registers[w_addr[2:0]] = w_id;
+                registers[w_addr[2:0]] = w_other;
             else
                 registers[w_addr[2:0]] = w_alu;
         end

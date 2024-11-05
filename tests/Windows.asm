@@ -1,12 +1,13 @@
 main:
     NOP
-    MOV R1, #0x1111  
-    MOVT R1, #0x1111 ;R1 is 0x11111111
+    MOV R1, #0xFFFF  
+    MOVT R1, #0xFFFF ;R1 is 0x11111111
     MOV R2, #0x0       ;R2 is 0x0
     MOV R6, #0x1010
     MOV R7, #0x0101
     ANDS R6, R6, R7  ;R6 is 0x0000
-    NOT R6, R6           ;R6 is 0x1111
+    ADD R6, R6, R1
+    NOT R6, R6           ;R6 is 1111...10000
     CLR R6
     CLR R7
     ADDS R1, R1, R2     ;negative 1 should set high and branch
