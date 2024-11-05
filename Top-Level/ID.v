@@ -35,13 +35,14 @@ module ID(
     output reg Special_encoding,     // Encoding for ALU usage
     output wire  [3:0] Second_LD,      // Second Level Decoding
     output wire [2:0] ALU_OC,         // ALU Operation Commands 
+
     output reg [3:0] B_cond,
     output reg [2:0] dest_reg,
-    output reg [2:0] pointer_reg,
     output reg [2:0] op_1_reg,
     output reg [2:0] op_2_reg,
     output reg [15:0] immediate,
     output reg [3:0] flags
+
 );
 /*=====================================================================================================*/
     
@@ -50,13 +51,13 @@ module ID(
     assign w_addr = dest_reg;
     assign Second_LD = Instruction[28:25];
     assign ALU_OC = Instruction[27:25];
+
     always @* begin
         // Default values to prevent latches
         First_LD = Instruction[31:30]; 
         dest_reg = 3'b0;
         op_1_reg = 3'b0;
         op_2_reg = 3'b0;
-        pointer_reg = 3'b0;
         Special_encoding = 0;
         immediate = 16'b0;
         flags = 4'b0;
@@ -200,14 +201,16 @@ module ID(
         // Load/Store (bits 29-26 don't care)
         //
         else if (First_LD == 2'b10) begin
-            if (Instruction[25] == 1'b1) begin
-                dest_reg[2:0] = Instruction[24:22];
-                pointer_reg[2:0] = Instruction[21:19];
-                immediate = Instruction[15:0];
-            end else begin
-                dest_reg[2:0] = Instruction[24:22];
-                pointer_reg[2:0] = Instruction[21:19];
-                immediate = Instruction[15:0];
+            if (Instruction[25] == 1'b1) begin //store
+                op_1_reg[2:0] = Instruction[24:22]; //dest
+                op_2_reg[2:0] = Instruction[21:19]; //pointer
+                immediate = Instruction[15:0];      //offset
+            
+            end else begin //load
+                dest_reg[2:0] = Instruction[24:22]; //dest
+                op_1_reg[2:0] = Instruction[21:19]; //pointer
+                immediate = Instruction[15:0];      //offset
+
             end
         end
 
@@ -224,7 +227,7 @@ module ID(
                     immediate = Instruction[15:0];
                 end
                 4'b0010: begin  // BR
-                    pointer_reg[2:0] = Instruction[21:19];
+                    op_1_reg[2:0] = Instruction[21:19];
                     immediate = Instruction[15:0];
                 end
                 default: begin  // Check for NOP and HALT

@@ -21,7 +21,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [2:0]        ALU_OC;
     wire [3:0]        B_cond;
     wire [2:0]        dest_reg;
-    wire [2:0]        pointer_reg;
     wire [2:0]        op_1_reg;
     wire [2:0]        op_2_reg;
     wire [15:0]       immediate;
@@ -42,14 +41,28 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire              w_enable;    //Enables writing to regs (active high)
     wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     wire [31:0]       w_alu;
-    wire [31:0]       w_id;
+
+    wire [31:0]       w_other;
     wire [3:0]        conditional_flags;
+
+    //Memory declarations
+    wire [31:0]       data_memory_a; //Data memory address
+    wire [31:0]       data_memory_in_v; //data memory read value
+    wire [31:0]       data_memory_out_v; //data memory write value
+    wire              data_memory_read; //data memory read enable
+    wire              data_memory_write; //data memory write enable
+
     //Instantiate Instruction/Data Memory
     Instruction_and_data instr_mem(
         .mem_Clk(clk),
         .instruction_memory_en(1'b1),
         .instruction_memory_a(in_mem_addr),
-        .instruction_memory_v(prefetch)
+        .instruction_memory_v(prefetch),
+        .data_memory_a(data_memory_a),
+        .data_memory_in_v(data_memory_in_v),
+        .data_memory_out_v(data_memory_out_v),
+        .data_memory_read(data_memory_read),
+        .data_memory_write(data_memory_write)
     );
 
     //Instatiate Module IF
@@ -62,7 +75,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
         .instruction(in_mem)
     );
 
-
     //Instatiate Module Decode
     ID instruction_decode( 
     .Instruction(in_mem), 
@@ -74,8 +86,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .Second_LD(Second_LD),
     .ALU_OC(ALU_OC),
     .B_cond(B_cond),
-    .dest_reg(dest_reg), 
-    .pointer_reg(pointer_reg),
+    .dest_reg(dest_reg),
     .op_1_reg(op_1_reg),
     .op_2_reg(op_2_reg),
     .immediate(immediate), 
@@ -91,7 +102,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
          .w_enable(w_enable), 
          .w_select(w_select), 
          .w_alu(w_alu), 
-         .w_id(w_id), 
+         .w_other(w_other), 
          .r_val_0(r_val_0), 
          .r_val_1(r_val_1)
         );
@@ -103,8 +114,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .Second_LD(Second_LD),
     .ALU_OC(ALU_OC),
     .B_cond(B_cond),
-    .dest_reg(dest_reg), 
-    .pointer_reg(pointer_reg),
+    .dest_reg(dest_reg),
     .op_1_reg_value(op_1_reg_value),
     .op_2_reg_value(op_2_reg_value),
     .immediate(immediate), 
@@ -112,12 +122,17 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .r_val_0(r_val_0), 
     .r_val_1(r_val_1), 
     .w_alu(w_alu),
-    .w_id(w_id),
+    .w_other(w_other),
     .w_enable(w_enable),
     .w_select(w_select),
     .flags(flags),
     .conditional_flags(conditional_flags),
-    .result(ALU_results)
+    .result(ALU_results),
+    .data_memory_in_v(data_memory_in_v),
+    .data_memory_a(data_memory_a),
+    .data_memory_out_v(data_memory_out_v),
+    .data_memory_read(data_memory_read),
+    .data_memory_write(data_memory_write)
     );
 
 endmodule
