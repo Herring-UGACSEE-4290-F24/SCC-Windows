@@ -148,7 +148,7 @@ always @(*) begin
 
             3'b001: begin
                 result[31:16] = immediate[15:0]; // MOVT command
-                result[15:0] = 'h0000;
+                
                 
 
             end

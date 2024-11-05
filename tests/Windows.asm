@@ -1,8 +1,14 @@
 main:
     NOP
-    MOV R1, #0x1111 
-    MOVT R1, #0x1111
-    MOV R2, #0
+    MOV R1, #0x1111  
+    MOVT R1, #0x1111 ;R1 is 0x11111111
+    MOV R2, #0x0       ;R2 is 0x0
+    MOV R6, #0x1010
+    MOV R7, #0x0101
+    ANDS R6, R6, R7  ;R6 is 0x0000
+    NOT R6, R6           ;R6 is 0x1111
+    CLR R6
+    CLR R7
     ADDS R1, R1, R2     ;negative 1 should set high and branch
     B.mi labelmi
     B failed
@@ -37,6 +43,7 @@ labelhs:
     MOV R2, #1
     ANDS R1, R1, R2
     B.ne labelne
+    b failed
 
 labelne:
     SET R4
@@ -65,6 +72,7 @@ labelhi:
     MOV R1, #10
     CMP R1, R1, #1
     b.ge labelge
+    b failed
     NOP
     NOP
     NOP
@@ -74,6 +82,7 @@ labelge:
     MOV R0, #0x10
     CMP R0, R0, #0x12
     b.lt    labellt
+    b failed
     NOP
     NOP
     NOP
