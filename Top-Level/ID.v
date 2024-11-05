@@ -71,11 +71,13 @@ module ID(
                 5'b00000: begin  // Mov Command
                     dest_reg[2:0] = Instruction[24:22];
                     // Used as enable in top level 
+                    op_1_reg[2:0] = Instruction[24:22];
                     immediate = Instruction[15:0];
                 end
                 5'b00001: begin  // Movt Command
                     dest_reg[2:0] = Instruction[24:22];
                     // Used as enable in top level 
+                    op_1_reg[2:0] = Instruction[24:22];
                     immediate = Instruction[15:0];
                 end
                 5'b10001: begin  // add
