@@ -5,7 +5,6 @@ module EX(
     ALU_OC, 
     B_cond,
     dest_reg, 
-    pointer_reg, 
     op_1_reg_value, 
     op_2_reg_value, 
     immediate, 
@@ -13,12 +12,17 @@ module EX(
     r_val_0, 
     r_val_1, 
     w_alu,
-    w_id,
+    w_other,
     w_enable,
     w_select,
     flags, 
     conditional_flags,
-    result);
+    result,
+    data_memory_in_v,
+    data_memory_a,
+    data_memory_out_v,
+    data_memory_read,
+    data_memory_write);
 
     //===========================================  I/O  ===================================================//
     // Just the outputs of decode 
@@ -28,7 +32,6 @@ module EX(
     input wire [2:0]        ALU_OC;             // ALU Operation Commands 
     input wire [3:0]        B_cond;             
     input wire [2:0]        dest_reg;
-    input wire [2:0]        pointer_reg;
     input wire [31:0]       op_1_reg_value;
     input wire [31:0]       op_2_reg_value;
     input wire [15:0]       immediate;
@@ -36,16 +39,23 @@ module EX(
     input wire [31:0]       r_val_0;
     input wire [31:0]       r_val_1;
     input wire [31:0]       w_alu;
-    input wire [31:0]       w_id;
+    input wire [31:0]       w_other;
     input wire              w_enable;    //Enables writing to regs (active high)
     input wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     input wire [3:0]        flags;       // CPSR      N, C, Z, V  [sadly not the same as arm8 hard to remember]
     input wire [3:0]        conditional_flags;
     wire [31:0]             extended_immediate;
-
     output reg [32:0]       result;
+
+    //Memory access
+    input [31:0]       data_memory_in_v; //data memory read value
+    output reg [31:0]       data_memory_a; //data memory access address
+    output reg [31:0]       data_memory_out_v; //data memory write value
+    output reg             data_memory_read; //data memory read enable
+    output reg             data_memory_write; //data memory write enable
     
     reg                     write_enable;
+    reg                     write_select;
 
     reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, V  sadly not the same as arm8 hard to remember
 
@@ -59,8 +69,9 @@ module EX(
     assign  op_1_reg_value = r_val_0;
     assign  op_2_reg_value = r_val_1;
     assign w_alu = result[31:0];
-    assign w_id = result[31:0];
+    assign w_other = result[31:0];
     assign w_enable = write_enable;
+    assign w_select = write_select;
 
     assign conditional_flags [3:0] = cpsr_flags;
 
@@ -70,6 +81,8 @@ module EX(
     result = 'h000000000;
     cpsr_flags = 'b0000;
     write_enable = 0;
+    data_memory_read = 1'b0;
+    data_memory_write = 1'b0;
    end
 
 always @(*) begin
@@ -172,6 +185,29 @@ always @(*) begin
 
 
         endcase
+
+    end else if (First_LD == 2'b10) begin
+        case (Second_LD[3:0])
+            4'b0000: begin // LOAD
+                //Reading from data mem
+                data_memory_read = 1'b1; //enable reading from data mem
+                data_memory_a = r_val_0 + immediate; //address to be read from is reg value + immediate offset
+                result = data_memory_in_v; //Set value to be written to value read from data mem
+
+                //Writing to register file
+                write_select = 1'b1; //enable writing to register from w_other
+                write_enable <= 1'b1; //enables writing at clock edge
+            end
+            4'b0001: begin //STORE
+                //Reading from register file
+                data_memory_out_v = r_val_0; //Data memory value to write = value of dest reg
+
+                //Writing to data memory
+                data_memory_a = r_val_1 + immediate; //address to be written to is reg value + immediate offset
+                data_memory_write = 1'b1; //enable writing to data mem
+            end
+        endcase
+    
     end else begin
         // Branching and System calls default
         write_enable = 0;

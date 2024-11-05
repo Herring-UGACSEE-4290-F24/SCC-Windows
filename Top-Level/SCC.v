@@ -21,7 +21,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire [2:0]        ALU_OC;
     wire [3:0]        B_cond;
     wire [2:0]        dest_reg;
-    wire [2:0]        pointer_reg;
     wire [2:0]        op_1_reg;
     wire [2:0]        op_2_reg;
     wire [15:0]       immediate;
@@ -43,7 +42,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     wire [31:0]       w_alu;
 
-    wire [31:0]       w_id;
+    wire [31:0]       w_other;
     wire [3:0]        conditional_flags;
 
     //Memory declarations
@@ -87,21 +86,11 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .Second_LD(Second_LD),
     .ALU_OC(ALU_OC),
     .B_cond(B_cond),
-    .dest_reg(dest_reg), 
-    .pointer_reg(pointer_reg),
+    .dest_reg(dest_reg),
     .op_1_reg(op_1_reg),
     .op_2_reg(op_2_reg),
     .immediate(immediate), 
-    .flags(flags),
-    .data_memory_in_v(data_memory_in_v),
-    .data_memory_a(data_memory_a),
-    .data_memory_out_v(data_memory_out_v),
-    .data_memory_read(data_memory_read),
-    .data_memory_write(data_memory_write),
-    .r_val_0(r_val_0),
-    .w_id(w_id),
-    .w_select(w_select),
-    .w_enable(w_enable)
+    .flags(flags)
     );
 
     //Instatiate Reg File
@@ -113,7 +102,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
          .w_enable(w_enable), 
          .w_select(w_select), 
          .w_alu(w_alu), 
-         .w_id(w_id), 
+         .w_other(w_other), 
          .r_val_0(r_val_0), 
          .r_val_1(r_val_1)
         );
@@ -125,8 +114,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .Second_LD(Second_LD),
     .ALU_OC(ALU_OC),
     .B_cond(B_cond),
-    .dest_reg(dest_reg), 
-    .pointer_reg(pointer_reg),
+    .dest_reg(dest_reg),
     .op_1_reg_value(op_1_reg_value),
     .op_2_reg_value(op_2_reg_value),
     .immediate(immediate), 
@@ -134,12 +122,17 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .r_val_0(r_val_0), 
     .r_val_1(r_val_1), 
     .w_alu(w_alu),
-    .w_id(w_id),
+    .w_other(w_other),
     .w_enable(w_enable),
     .w_select(w_select),
     .flags(flags),
     .conditional_flags(conditional_flags),
-    .result(ALU_results)
+    .result(ALU_results),
+    .data_memory_in_v(data_memory_in_v),
+    .data_memory_a(data_memory_a),
+    .data_memory_out_v(data_memory_out_v),
+    .data_memory_read(data_memory_read),
+    .data_memory_write(data_memory_write)
     );
 
 endmodule
