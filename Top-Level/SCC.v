@@ -42,14 +42,28 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     wire              w_enable;    //Enables writing to regs (active high)
     wire              w_select;    //Mux select for ALU/ID writing to reg files, 0 = ALU, 1 = ID
     wire [31:0]       w_alu;
+
     wire [31:0]       w_id;
     wire [3:0]        conditional_flags;
+
+    //Memory declarations
+    wire [31:0]       data_memory_a; //Data memory address
+    wire [31:0]       data_memory_in_v; //data memory read value
+    wire [31:0]       data_memory_out_v; //data memory write value
+    wire              data_memory_read; //data memory read enable
+    wire              data_memory_write; //data memory write enable
+
     //Instantiate Instruction/Data Memory
     Instruction_and_data instr_mem(
         .mem_Clk(clk),
         .instruction_memory_en(1'b1),
         .instruction_memory_a(in_mem_addr),
-        .instruction_memory_v(prefetch)
+        .instruction_memory_v(prefetch),
+        .data_memory_a(data_memory_a),
+        .data_memory_in_v(data_memory_in_v),
+        .data_memory_out_v(data_memory_out_v),
+        .data_memory_read(data_memory_read),
+        .data_memory_write(data_memory_write)
     );
 
     //Instatiate Module IF
@@ -61,7 +75,6 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
         .pc(in_mem_addr),
         .instruction(in_mem)
     );
-
 
     //Instatiate Module Decode
     ID instruction_decode( 
@@ -79,7 +92,16 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     .op_1_reg(op_1_reg),
     .op_2_reg(op_2_reg),
     .immediate(immediate), 
-    .flags(flags)
+    .flags(flags),
+    .data_memory_in_v(data_memory_in_v),
+    .data_memory_a(data_memory_a),
+    .data_memory_out_v(data_memory_out_v),
+    .data_memory_read(data_memory_read),
+    .data_memory_write(data_memory_write),
+    .r_val_0(r_val_0),
+    .w_id(w_id),
+    .w_select(w_select),
+    .w_enable(w_enable)
     );
 
     //Instatiate Reg File

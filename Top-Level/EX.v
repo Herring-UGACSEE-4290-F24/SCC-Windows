@@ -46,7 +46,9 @@ module EX(
     output reg [32:0]       result;
     
     reg                     write_enable;
+
     reg [3:0]        cpsr_flags;              //CPSR      N, C, Z, V  sadly not the same as arm8 hard to remember
+
     //output wire [32:0]      ALU_results;
     
     //output wire [31:0]      updated_pc;
@@ -59,7 +61,9 @@ module EX(
     assign w_alu = result[31:0];
     assign w_id = result[31:0];
     assign w_enable = write_enable;
+
     assign conditional_flags [3:0] = cpsr_flags;
+
     // Assign the result to ALU_results
  
    initial begin
@@ -139,7 +143,9 @@ always @(*) begin
        
     end else if (First_LD == 2'b00) begin
         // Non-ALU functions with REG
+
         write_enable = 1;
+
         case (ALU_OC[2:0])
             3'b000: begin
                 result[15:0] = immediate[15:0]; // MOV operation
@@ -147,9 +153,7 @@ always @(*) begin
             end
 
             3'b001: begin
-                result[31:16] = immediate[15:0]; // MOVT command
-                
-                
+                result[31:16] = immediate[15:0]; // MOVT command               
 
             end
 
@@ -165,6 +169,8 @@ always @(*) begin
             
             3'b011: result[31:0] = 'h11111111; // SET
             default: result = 32'b0;
+
+
         endcase
     end else begin
         // Branching and System calls default
