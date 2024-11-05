@@ -86,6 +86,7 @@ module EX(
    end
 
 always @(*) begin
+    result = 'h000000000;
     if (Special_encoding) begin
         // Special Encoding high means ALU, so these are ALU FUNCTIONS
         write_enable = 1;
@@ -162,11 +163,13 @@ always @(*) begin
         case (ALU_OC[2:0])
             3'b000: begin
                 result[15:0] = immediate[15:0]; // MOV operation
+                result[31:16] = op_1_reg_value[31:16];
 
             end
 
             3'b001: begin
-                result[31:16] = immediate[15:0]; // MOVT command               
+                result[31:16] = immediate[15:0]; // MOVT command
+                result[15:0] = op_1_reg_value[15:0];
 
             end
 
