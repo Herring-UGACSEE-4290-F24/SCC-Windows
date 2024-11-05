@@ -39,20 +39,20 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
 
     always @(posedge clk or posedge reset)
         begin
-        instruction <= prefetch;
-        br_immediate = prefetch[15:0]; 
+        instruction <= prefetch; 
         if (reset) begin
             pc = 32'h0000;                          // Resets PC if reset is high
         end 
 
-        if (prefetch[31:25] != 7'b1100001)begin
+        if (instruction[31:25] != 7'b1100001)begin
             pc = pc + 32'h0004;                         // Default case: Increment PC by four
         end
         
         else         // Conditional branching
                 begin
+                br_immediate = instruction[15:0];
                     case (instruction[28:25]) // N, C, Z, V
-                    4'b0000: begin // beq
+                    4'b0001: begin // beq
                         case (conditional_flags[1])
                             1'b1: begin
 
@@ -63,12 +63,15 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                              else begin
                                 br_immediate[31:16] = 16'hFFFF;        // Sign-extending immediate value to 32 bits
                                 pc = pc + br_immediate;                // Decrementing PC by negative offset
-                            end
-
                                 end
+
+                            end
+                            1'b0: begin
+                                pc = pc + 32'h0004;
+                            end
                         endcase
                     end
-                    4'b0001: begin // bne
+                    4'b0000: begin // bne
                         case (!conditional_flags[1])
                             1'b1: begin
                                
