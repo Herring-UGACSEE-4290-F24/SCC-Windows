@@ -186,7 +186,7 @@ always @(*) begin
             end
             3'b010: result[31:0] = 'h00000000; // CLR (Clear)
             
-            3'b011: result[31:0] = 'h11111111; // SET
+            3'b011: result[31:0] = 'hFFFFFFFF; // SET
             default: result = 32'b0;
 
 
