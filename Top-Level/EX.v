@@ -81,12 +81,15 @@ module EX(
     result = 'h000000000;
     cpsr_flags = 'b0000;
     write_enable = 0;
-    data_memory_read = 1'b0;
-    data_memory_write = 1'b0;
+    data_memory_read = 0;
+    data_memory_write = 0;
    end
 
 always @(*) begin
     result = 'h000000000;
+    write_enable = 0;
+    data_memory_read = 0;
+    data_memory_write = 0;
     if (Special_encoding) begin
         // Special Encoding high means ALU, so these are ALU FUNCTIONS
         write_enable = 1;
