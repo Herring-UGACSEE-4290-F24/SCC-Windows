@@ -9,7 +9,7 @@ module SCC_tb;
     wire [31:0]   in_mem;
     wire [31:0]   data_in;
     wire [31:0]   in_mem_addr;     // address pointed to in instruction memory
-    wire          in_mem_en;       // enable instruction memory fetch
+    reg           in_mem_en;       // enable instruction memory fetch
     wire [31:0]   data_addr;       // address pointed to in data memory
     wire [31:0]   data_out;        // data to write to memory
     wire          data_read;       // control reading data
@@ -19,7 +19,8 @@ module SCC_tb;
     SCC single_cycle_computer (
         .clk(clk),
         .reset(reset),
-        .in_mem(in_mem), 
+        .in_mem(in_mem),
+        .in_mem_en(in_mem_en), 
         .data_in(data_in),
         .in_mem_addr(in_mem_addr),
         .data_addr(data_addr),
@@ -28,6 +29,7 @@ module SCC_tb;
 
     initial begin
         $dumpvars(0,SCC_tb);
+        in_mem_en = 1'b1;
         clk = 1'b0;
         reset = 1'b1;
         #10 clk = 1'b1;
@@ -153,6 +155,8 @@ module SCC_tb;
         #10 clk = 1'b0;
         #10 clk = 1'b1;
         #10 clk = 1'b0;
+        in_mem_en = 1'b0;
+        #20;
         //forever begin
         //    #10 clk = ~clk;
         //end

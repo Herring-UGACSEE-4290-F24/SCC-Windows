@@ -13,7 +13,13 @@ module Instruction_and_data
   output reg [31:0] data_memory_in_v
 );
 reg [7:0] memory [0:(2**16)-1] ; //Maximum array to hold both instruction and data memory
+integer i;
+integer file;
+
 initial begin
+  for (i = 0; i < (2**16)-1; i = i + 1) begin
+    memory[i] = 8'b00000000; //initialize zero
+  end
   $readmemh("output.mem", memory);
   end
 always @(*) begin
@@ -40,6 +46,28 @@ always @(*) begin
     memory[data_memory_a+3] <= data_memory_out_v[7:0];
     data_memory_in_v <= 'bx;
   end
+end
+always @(negedge instruction_memory_en) begin
+  // Open a file for writing
+  file = $fopen("scc_dump.csv", "w");
+  if (file == 0) begin
+    $display("Error: Could not open file.");
+    $finish;
+  end
+
+  // Write header for CSV file
+  $fwrite(file, "Address,Value\n");
+
+  // Write memory contents to the CSV file
+  for (i = 0; i < (2**16)-1; i = i + 4) begin
+    $fwrite(file, "0x%8h,0x%2h%2h%2h%2h\n", i, memory[i], memory[i+1], memory[i+2], memory[i+3]);
+  end
+
+  // Close the file
+  $fclose(file);
+
+  $display("Memory contents dumped to memory_dump.csv");
+  $finish;
 end
 endmodule
 

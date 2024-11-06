@@ -3,3 +3,8 @@ bin/
 dump.lx2
 output.lst
 run.log
+scc_dump.csv
+memoutput.csv
+dataoutput.csv
+Cargo.lock
+\target
