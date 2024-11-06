@@ -66,8 +66,8 @@ module EX(
     assign extended_immediate[31:16] = {16{immediate[15]}};
     assign w_select = !Special_encoding;
 
-    assign  op_1_reg_value = r_val_0;
-    assign  op_2_reg_value = r_val_1;
+    assign op_1_reg_value = r_val_0;
+    assign op_2_reg_value = r_val_1;
     assign w_alu = result[31:0];
     assign w_other = result[31:0];
     assign w_enable = write_enable;

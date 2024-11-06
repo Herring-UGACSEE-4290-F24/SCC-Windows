@@ -3,3 +3,7 @@ del dump.lx2
 del output.lst
 del output.mem
 del run.log
+del scc_dump.csv
+del memoutput.csv
+del dataoutput.csv
+del Cargo.lock
