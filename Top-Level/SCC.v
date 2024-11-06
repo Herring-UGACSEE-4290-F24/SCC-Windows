@@ -1,12 +1,12 @@
-module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
+module SCC(clk, reset, in_mem, data_in, in_mem_addr, in_mem_en, data_addr, data_out);
     /*===========================================  I/O  ===================================================*/
     input           clk;             // main clock signal
     input           reset;           // sets all regs to known state
     input [31:0]    in_mem;          // instructions being fetched
-    input [31:0]    data_in;         // data read from memory    
+    input [31:0]    data_in;         // data read from memory
+    input           in_mem_en;       // enable instruction memory fetch   
 
     output [31:0]   in_mem_addr;     // address pointed to in instruction memory
-    output          in_mem_en;       // enable instruction memory fetch
     output [31:0]   data_addr;       // address pointed to in data memory
     output [31:0]   data_out;        // data to write to memory
     /*=====================================================================================================*/
@@ -55,7 +55,7 @@ module SCC(clk, reset, in_mem, data_in, in_mem_addr, data_addr, data_out);
     //Instantiate Instruction/Data Memory
     Instruction_and_data instr_mem(
         .mem_Clk(clk),
-        .instruction_memory_en(1'b1),
+        .instruction_memory_en(in_mem_en),
         .instruction_memory_a(in_mem_addr),
         .instruction_memory_v(prefetch),
         .data_memory_a(data_memory_a),
