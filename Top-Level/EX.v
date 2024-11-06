@@ -152,9 +152,9 @@ always @(*) begin
             endcase
 
             case (First_LD[0])
-                1'b1: cpsr_flags[0] = (op_1_reg_value[31] | op_2_reg_value[31]) ^ result[31]; // V for Register
+                1'b1: cpsr_flags[0] = ((op_1_reg_value[30] ^ op_2_reg_value[30]) & (~result[30])) | (op_1_reg_value[30] & op_2_reg_value[30]);  // V for Register
 
-                1'b0: cpsr_flags[0] = (op_1_reg_value[31] | extended_immediate[31]) ^ result[31]; // V for Immediate
+                1'b0: cpsr_flags[0] = ((op_1_reg_value[30] ^ extended_immediate[30]) & (~result[30])) | (op_1_reg_value[30] & extended_immediate[30]);// V for Immediate
             endcase
         end
        

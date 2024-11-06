@@ -51,8 +51,8 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
         else         // Conditional branching
                 begin
                 br_immediate = instruction[15:0];
-                    case (instruction[28:25]) // N, C, Z, V
-                    4'b0001: begin // beq
+                    case (instruction[24:21]) // N, C, Z, V
+                    4'b0000: begin // beq
                         case (conditional_flags[1])
                             1'b1: begin
 
@@ -71,9 +71,9 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                             end
                         endcase
                     end
-                    4'b0000: begin // bne
-                        case (!conditional_flags[1])
-                            1'b1: begin
+                    4'b0001: begin // bne
+                        case (conditional_flags[1])
+                            1'b0: begin
                                
                            if (br_immediate[15] == 1'b0)                   
                                 begin
@@ -83,7 +83,10 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                                 br_immediate[31:16] = 16'hFFFF;        // Sign-extending immediate value to 32 bits
                                 pc = pc + br_immediate;                // Decrementing PC by negative offset
                             end
-
+                            
+                            end
+                             1'b1: begin
+                                pc = pc + 32'h0004;
                             end
                         endcase
                     end
@@ -129,7 +132,10 @@ module IF(clk, reset, prefetch, conditional_flags, pc, instruction);
                                 br_immediate[31:16] = 16'hFFFF;        // Sign-extending immediate value to 32 bits
                                 pc = pc + br_immediate;                // Decrementing PC by negative offset
                             end
-
+                            
+                            end
+                             1'b0: begin
+                                pc = pc + 32'h0004;
                             end
                         endcase
                     end
